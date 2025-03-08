@@ -1,11 +1,10 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, Clock } from "lucide-react";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 // Avatar images that resemble the layout from the reference image
 const AVATAR_IMAGES = [
@@ -113,8 +112,8 @@ const AvatarSelection = () => {
             <h1 className="text-2xl font-bold">Choose Project Avatar</h1>
           </div>
 
-          <Card className="border-theme-gray p-6">
-            {/* Grid layout similar to the reference image */}
+          <Card className="border-theme-gray/40 bg-theme-black/50 p-6">
+            {/* Grid layout styled to match the dark theme in the reference image */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {AVATAR_IMAGES.map((avatar) => (
                 <div 
@@ -129,6 +128,8 @@ const AvatarSelection = () => {
                     }`}
                     onClick={() => handleAvatarSelect(avatar.id)}
                   >
+                    <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent opacity-70"></div>
+                    
                     <img 
                       src={avatar.url} 
                       alt={avatar.alt} 
@@ -137,7 +138,7 @@ const AvatarSelection = () => {
                     
                     {/* Label at the bottom */}
                     <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
-                      <p className="text-white font-semibold text-lg">{avatar.label}</p>
+                      <p className="text-white font-semibold text-sm">{avatar.label}</p>
                     </div>
                     
                     {/* Tag if present */}
@@ -149,7 +150,7 @@ const AvatarSelection = () => {
                     
                     {/* Selected indicator */}
                     {selectedAvatar === avatar.id && (
-                      <div className="absolute bottom-2 right-2 bg-theme-orange rounded-full p-1">
+                      <div className="absolute top-2 right-2 bg-theme-orange rounded-full p-1">
                         <Check size={16} className="text-white" />
                       </div>
                     )}
