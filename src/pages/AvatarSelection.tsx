@@ -89,7 +89,7 @@ const AvatarSelection = () => {
             <h1 className="text-2xl font-bold">Choose Your Avatar</h1>
           </div>
 
-          {/* Avatar gallery with smooth scrolling */}
+          {/* Avatar gallery with smooth scrolling - removed scrollbar */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-6 max-h-[70vh] overflow-y-auto no-scrollbar pb-12 pr-2 scroll-smooth">
             {AVATAR_IMAGES.concat(AVATAR_IMAGES).concat(AVATAR_IMAGES).map((avatar, index) => (
               <Card 
