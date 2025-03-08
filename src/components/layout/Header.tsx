@@ -23,11 +23,11 @@ const Header = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Check if we're on an auth page
-  const isAuthPage = currentPath === '/signin' || currentPath === '/signup';
-
+  // Only show header on home page
+  if (currentPath !== '/home') return null;
+  
   // Simulate authentication state
-  const isAuthenticated = currentPath === '/home' || currentPath === '/dashboard' || currentPath === '/avatar-selection';
+  const isAuthenticated = true;
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -49,9 +49,6 @@ const Header = () => {
       navigate("/signin");
     }, 500);
   };
-
-  // Skip rendering header on auth pages
-  if (isAuthPage) return null;
   
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-theme-black/95 backdrop-blur supports-[backdrop-filter]:bg-theme-black/60">
