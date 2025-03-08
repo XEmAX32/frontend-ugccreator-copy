@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Eye, Save } from "lucide-react";
+import { ArrowLeft, Clock, Eye, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import PageContainer from "@/components/layout/PageContainer";
@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +39,7 @@ const CreateVideo = () => {
     }
   ]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
   const [projectTitle, setProjectTitle] = useState("");
   const [downloadAfterSave, setDownloadAfterSave] = useState(false);
   const { toast } = useToast();
@@ -93,6 +95,7 @@ const CreateVideo = () => {
   };
 
   const viewAllClips = () => {
+    setShowVideoDialog(true);
     setActiveClipId(null);
     toast({
       title: "Viewing all clips",
@@ -309,6 +312,43 @@ const CreateVideo = () => {
               className="bg-theme-orange hover:bg-theme-orange-light text-white"
             >
               Save Project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Video Preview Dialog */}
+      <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
+        <DialogContent className="sm:max-w-4xl h-[80vh] bg-theme-black border-theme-gray/40 flex flex-col">
+          <DialogHeader className="flex flex-row items-center justify-between">
+            <DialogTitle className="text-xl text-white">Full Video Preview</DialogTitle>
+            <DialogClose className="h-6 w-6 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-hidden p-1">
+            <div className="h-full">
+              <VideoPreview 
+                activeClipId={null}
+                clips={clips}
+                totalDuration={totalDuration}
+                maxDuration={maxDuration}
+                isFullscreen={true}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="border-t border-theme-gray/20 pt-4">
+            <div className="text-sm text-gray-400">
+              {clips.length} clips · {Math.floor(totalDuration / 60)}:{(totalDuration % 60).toFixed(0).padStart(2, '0')} total duration
+            </div>
+            <Button 
+              onClick={() => setShowVideoDialog(false)}
+              className="bg-theme-orange hover:bg-theme-orange-light"
+            >
+              Close Preview
             </Button>
           </DialogFooter>
         </DialogContent>
