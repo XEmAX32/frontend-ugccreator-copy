@@ -71,13 +71,15 @@ const SIMPLIFIED_CATEGORIES = [
   { id: "personal", label: "Personal" }
 ];
 
+const INITIAL_GENERATED_AVATAR = null;
+
 const AvatarSelection = () => {
   const [selectedAvatar, setSelectedAvatar] = useState<number>(1);
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
   const [promptText, setPromptText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedAvatars, setGeneratedAvatars] = useState(AI_GENERATED_AVATARS);
+  const [generatedAvatar, setGeneratedAvatar] = useState(INITIAL_GENERATED_AVATAR);
   const navigate = useNavigate();
 
   const handleAvatarSelect = (id: number) => {
@@ -99,9 +101,16 @@ const AvatarSelection = () => {
     }
     
     setIsGenerating(true);
+    setGeneratedAvatar(null);
+    
     console.log("Generating avatar with prompt:", promptText);
+    
     setTimeout(() => {
       setIsGenerating(false);
+      setGeneratedAvatar({
+        id: "gen1", 
+        url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=800&fit=crop"
+      });
       toast({
         title: "Avatar generated!",
         description: "Your avatar has been created successfully.",
@@ -123,8 +132,13 @@ const AvatarSelection = () => {
     
     setIsGenerating(true);
     console.log("Regenerating avatar with prompt:", promptText);
+    
     setTimeout(() => {
       setIsGenerating(false);
+      setGeneratedAvatar({
+        id: "gen" + Math.random().toString(36).substring(7), 
+        url: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=800&fit=crop"
+      });
       toast({
         title: "Avatar regenerated!",
         description: "Your new avatar is ready for review.",
@@ -250,7 +264,7 @@ const AvatarSelection = () => {
                 disabled={isGenerating}
               />
               <Button 
-                onClick={isGenerating ? handleRegenerateAvatar : handleGenerateAvatar}
+                onClick={isGenerating ? undefined : handleGenerateAvatar}
                 className="w-full bg-theme-orange hover:bg-theme-orange-light"
                 disabled={!promptText.trim() || isGenerating}
               >
@@ -261,66 +275,51 @@ const AvatarSelection = () => {
                   </>
                 ) : (
                   <>
-                    {generatedAvatars.length > 0 ? (
-                      <>
-                        <RefreshCw className="mr-2" size={16} />
-                        Regenerate Avatar
-                      </>
-                    ) : (
-                      <>
-                        <Wand2 className="mr-2" size={16} />
-                        Generate Avatar
-                      </>
-                    )}
+                    <Wand2 className="mr-2" size={16} />
+                    Generate Avatar
                   </>
                 )}
               </Button>
             </div>
             
             <div className="space-y-4">
-              <h3 className="text-lg font-medium text-white">Generated Avatars</h3>
+              <h3 className="text-lg font-medium text-white">Generated Avatar</h3>
+              
               {isGenerating ? (
-                <div className="flex flex-col items-center justify-center h-64 bg-gray-800/30 rounded-lg">
+                <div className="flex flex-col items-center justify-center h-[400px] bg-gray-800/30 rounded-lg">
                   <Loader2 className="animate-spin text-theme-orange h-12 w-12 mb-4" />
                   <p className="text-white">Creating your avatar...</p>
                 </div>
-              ) : generatedAvatars.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 bg-gray-800/30 rounded-lg">
+              ) : !generatedAvatar ? (
+                <div className="flex flex-col items-center justify-center h-[400px] bg-gray-800/30 rounded-lg">
                   <p className="text-white text-center">
-                    Your generated avatars will appear here.<br />
+                    Your generated avatar will appear here.<br />
                     Enter a prompt and click "Generate Avatar".
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-4 max-h-[400px] overflow-y-auto no-scrollbar">
-                  {generatedAvatars.map((avatar) => (
-                    <div key={avatar.id} className="relative">
-                      <img 
-                        src={avatar.url} 
-                        alt="Generated avatar" 
-                        className="w-full rounded-lg object-cover" 
-                        style={{ aspectRatio: '3/4' }}
-                      />
-                      <div className="absolute bottom-3 right-3 flex space-x-2">
-                        <Button 
-                          className="bg-gray-800/80 hover:bg-gray-700 text-white"
-                          size="sm"
-                          onClick={handleRegenerateAvatar}
-                          disabled={isGenerating}
-                        >
-                          <RefreshCw size={14} />
-                        </Button>
-                        <Button 
-                          className="bg-theme-orange hover:bg-theme-orange-light"
-                          size="sm"
-                          onClick={() => handleAcceptAvatar(avatar.id)}
-                          disabled={isGenerating}
-                        >
-                          Use Avatar
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                <div className="relative h-[400px]">
+                  <img 
+                    src={generatedAvatar.url} 
+                    alt="Generated avatar" 
+                    className="w-full rounded-lg object-cover h-full" 
+                  />
+                  <div className="absolute bottom-3 right-3 flex space-x-2">
+                    <Button 
+                      className="bg-gray-800/80 hover:bg-gray-700 text-white"
+                      size="sm"
+                      onClick={handleRegenerateAvatar}
+                    >
+                      <RefreshCw size={14} className="mr-1" /> Regenerate
+                    </Button>
+                    <Button 
+                      className="bg-theme-orange hover:bg-theme-orange-light"
+                      size="sm"
+                      onClick={() => handleAcceptAvatar(generatedAvatar.id)}
+                    >
+                      Use Avatar
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
