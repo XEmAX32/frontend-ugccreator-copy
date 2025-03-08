@@ -64,8 +64,6 @@ const AvatarSelection = () => {
     navigate("/create-video");
   };
 
-  const mainAvatar = AVATAR_IMAGES.find(avatar => avatar.id === selectedAvatar) || AVATAR_IMAGES[0];
-
   return (
     <PageContainer>
       <div className="container mx-auto px-4 py-8 relative">
@@ -80,7 +78,7 @@ const AvatarSelection = () => {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center mb-6">
+          <div className="flex items-center mb-8">
             <Button 
               variant="ghost" 
               onClick={() => navigate("/home")}
@@ -91,32 +89,12 @@ const AvatarSelection = () => {
             <h1 className="text-2xl font-bold text-center mx-auto pr-10">Choose Your Avatar</h1>
           </div>
 
-          {/* Main selected avatar */}
-          <div className="mb-8">
-            <Card 
-              className="rounded-xl overflow-hidden border-0 shadow-lg mx-auto"
-              style={{ maxWidth: '320px', maxHeight: '420px' }}
-            >
-              <div className="relative w-full h-full">
-                <img 
-                  src={mainAvatar.url} 
-                  alt={mainAvatar.alt} 
-                  className="w-full h-full object-cover"
-                  style={{ aspectRatio: '3/4' }}
-                />
-                <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
-                  <span className="text-white text-sm font-medium">{mainAvatar.year}</span>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Avatar gallery - changed to grid with more rows */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 max-h-[400px] overflow-y-auto no-scrollbar pb-8">
-            {AVATAR_IMAGES.concat(AVATAR_IMAGES).map((avatar, index) => (
+          {/* Avatar gallery with smooth scrolling */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-6 max-h-[70vh] overflow-y-auto no-scrollbar pb-12 pr-2 scroll-smooth">
+            {AVATAR_IMAGES.concat(AVATAR_IMAGES).concat(AVATAR_IMAGES).map((avatar, index) => (
               <Card 
                 key={`${avatar.id}-${index}`}
-                className={`relative rounded-lg overflow-hidden cursor-pointer transition-all ${
+                className={`relative rounded-lg overflow-hidden cursor-pointer transition-all hover:transform hover:scale-[1.02] ${
                   selectedAvatar === avatar.id 
                     ? "ring-2 ring-theme-orange" 
                     : "hover:ring-1 hover:ring-theme-orange/60"
@@ -132,6 +110,10 @@ const AvatarSelection = () => {
                     alt={avatar.alt} 
                     className="w-full h-full object-cover"
                   />
+                  
+                  <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
+                    <span className="text-white text-sm font-medium">{avatar.year}</span>
+                  </div>
                   
                   {selectedAvatar === avatar.id && (
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-center justify-center">
