@@ -132,6 +132,11 @@ const ScriptEditor = ({
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-white/80">Avatar Movements & Product Interaction</h3>
             <div className="flex items-center gap-2">
+              {selectedProduct && (
+                <div className="bg-theme-gray/20 text-white/90 text-xs px-3 py-1 rounded-md">
+                  Selected: {selectedProduct}
+                </div>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
@@ -140,7 +145,7 @@ const ScriptEditor = ({
                     onClick={(e) => e.preventDefault()} // Prevent form submission
                   >
                     <Package size={16} />
-                    <span className="font-medium text-sm">{selectedProduct || "Select Product"}</span>
+                    <span className="font-medium text-sm">Select Product</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-theme-black/90 border-theme-gray/30">
