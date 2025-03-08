@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock, Eye, Save } from "lucide-react";
@@ -40,6 +39,7 @@ const CreateVideo = () => {
   ]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [projectTitle, setProjectTitle] = useState("");
+  const [downloadAfterSave, setDownloadAfterSave] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -166,6 +166,11 @@ const CreateVideo = () => {
       description: "Your video project has been saved successfully."
     });
     
+    // Download the video if the checkbox is checked
+    if (downloadAfterSave) {
+      handleDownloadVideo();
+    }
+    
     // Close dialog and navigate back to the home page
     setShowSaveDialog(false);
     navigate("/home");
@@ -274,6 +279,19 @@ const CreateVideo = () => {
                   className="bg-theme-black/80 border-theme-gray/40 text-white"
                   autoFocus
                 />
+              </div>
+              
+              <div className="flex items-center space-x-2 pt-2">
+                <input
+                  type="checkbox"
+                  id="download-checkbox"
+                  checked={downloadAfterSave}
+                  onChange={(e) => setDownloadAfterSave(e.target.checked)}
+                  className="h-4 w-4 rounded border-theme-gray/40 text-theme-orange focus:ring-theme-orange"
+                />
+                <Label htmlFor="download-checkbox" className="text-white text-sm">
+                  Download video after saving
+                </Label>
               </div>
             </div>
           </div>
