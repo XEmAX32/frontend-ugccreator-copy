@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -48,4 +49,19 @@
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;  /* Chrome, Safari, Opera */
+}
+
+/* Avatar selection animations */
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(255, 255, 255, 0.3); }
+  50% { border-color: rgba(255, 255, 255, 0.8); }
+}
+
+.avatar-pulse {
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+/* Gradient background for avatar selection */
+.avatar-bg-gradient {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e1b4b 100%);
 }
