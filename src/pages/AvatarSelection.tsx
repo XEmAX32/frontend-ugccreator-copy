@@ -78,15 +78,15 @@ const AvatarSelection = () => {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center mb-8">
+          <div className="mb-8 text-center relative">
             <Button 
               variant="ghost" 
               onClick={() => navigate("/home")}
-              className="mr-auto"
+              className="absolute left-0 top-0"
             >
               <ArrowLeft size={20} />
             </Button>
-            <h1 className="text-2xl font-bold text-center mx-auto pr-10">Choose Your Avatar</h1>
+            <h1 className="text-2xl font-bold">Choose Your Avatar</h1>
           </div>
 
           {/* Avatar gallery with smooth scrolling */}
