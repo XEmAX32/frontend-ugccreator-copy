@@ -19,9 +19,13 @@ const Home = () => {
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8 flex justify-center">
-            <Button asChild className="bg-theme-orange hover:bg-theme-orange-light flex items-center gap-2">
+            <Button 
+              asChild 
+              className="bg-theme-orange hover:bg-theme-orange-light flex items-center gap-3 text-lg px-6 py-6 rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-200"
+              size="lg"
+            >
               <Link to="/avatar-selection">
-                <Plus size={18} /> New
+                <Plus size={22} /> New Project
               </Link>
             </Button>
           </div>
