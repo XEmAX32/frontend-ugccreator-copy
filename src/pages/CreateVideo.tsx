@@ -61,10 +61,10 @@ const CreateVideo = () => {
                     <Button 
                       variant="outline" 
                       onClick={() => setShowExamples(!showExamples)}
-                      className="px-3 py-1 bg-theme-orange hover:bg-theme-orange-light text-white border-none rounded-md shadow-md flex items-center gap-2 animate-pulse"
+                      className="px-3 py-1 bg-theme-orange hover:bg-theme-orange-light text-white border-none rounded-md shadow-md flex items-center gap-2"
                     >
-                      <Hand size={16} className="animate-bounce" />
-                      <span className="font-medium text-sm">Click me</span>
+                      <Hand size={16} />
+                      <span className="font-medium text-sm">Click me for help</span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
