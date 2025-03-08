@@ -142,16 +142,6 @@ const VideoPreview = ({
               {Math.floor(currentTime / 60)}:{(currentTime % 60).toFixed(0).padStart(2, '0')} / {Math.floor(displayDuration / 60)}:{(displayDuration % 60).toFixed(0).padStart(2, '0')}
             </span>
           </div>
-          
-          <div className="text-xs text-gray-400">
-            {isFullscreen 
-              ? `Full video preview (${clips.length} clips)` 
-              : activeClipId 
-                ? `Editing clip ${activeClipIndex + 1} of ${clips.length}` 
-                : clips.length > 0 
-                  ? `Preview of full video (${clips.length} clips)` 
-                  : "No clips created yet"}
-          </div>
         </div>
       </div>
     </Card>
