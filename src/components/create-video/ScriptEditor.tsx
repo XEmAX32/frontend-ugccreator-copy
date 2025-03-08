@@ -87,11 +87,6 @@ const ScriptEditor = ({
   };
 
   const handleProductSelect = (product: string) => {
-    if (product === "No Product") {
-      setSelectedProduct(null);
-      return;
-    }
-    
     setSelectedProduct(product);
   };
 
