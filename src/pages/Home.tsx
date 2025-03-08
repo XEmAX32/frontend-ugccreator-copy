@@ -1,4 +1,3 @@
-
 import { Plus, Clock, Video } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import PageContainer from "@/components/layout/PageContainer";
@@ -26,11 +25,9 @@ const projectFormats = [{
 }];
 const Home = () => {
   const navigate = useNavigate();
-
   const handleCardClick = () => {
     navigate("/avatar-selection");
   };
-
   return <PageContainer>
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-6xl mx-auto">
@@ -54,38 +51,10 @@ const Home = () => {
               {/* Projects would be mapped here */}
             </div> : <div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                {projectFormats.map(format => <Card key={format.id} className="border-theme-gray bg-theme-black/50 hover:bg-theme-gray/20 transition-all cursor-pointer overflow-hidden rounded-lg border border-theme-gray/40">
-                    <CardContent className="p-0">
-                      <div className="relative aspect-[5/3]">
-                        <div className="absolute top-2 left-2 flex items-center">
-                          <div className="bg-theme-black/70 rounded-full p-1.5 flex items-center">
-                            <Clock size={14} className="text-gray-400" />
-                            <span className="text-xs text-gray-400 ml-1">{format.duration}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col justify-center items-center h-full">
-                          <div className="text-4xl">{format.icon}</div>
-                        </div>
-                      </div>
-                      
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-1">
-                          <h3 className="font-medium text-lg">{format.title}</h3>
-                        </div>
-                        <p className="text-gray-400 text-sm">{format.type}</p>
-                        <p className="text-gray-500 text-xs mt-2">{format.subtitle}</p>
-                      </div>
-                    </CardContent>
-                  </Card>)}
-              </div>
+              
             </div>}
 
-          {mockProjects.length === 0 && <Card 
-              className="border-theme-gray mt-8 bg-transparent cursor-pointer hover:bg-theme-gray/10 transition-all"
-              onClick={handleCardClick}
-            >
+          {mockProjects.length === 0 && <Card className="border-theme-gray mt-8 bg-transparent cursor-pointer hover:bg-theme-gray/10 transition-all" onClick={handleCardClick}>
               <CardContent className="p-8">
                 <div className="text-center py-8 flex flex-col items-center gap-4">
                   <div className="bg-theme-black/70 rounded-full p-2 flex items-center">
