@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, Wand2, RefreshCw, Loader2 } from "lucide-react";
@@ -74,6 +75,7 @@ const SIMPLIFIED_CATEGORIES = [
 const INITIAL_GENERATED_AVATAR = null;
 
 const AvatarSelection = () => {
+  const [avatarImages, setAvatarImages] = useState(AVATAR_IMAGES);
   const [selectedAvatar, setSelectedAvatar] = useState<number>(1);
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
@@ -119,11 +121,25 @@ const AvatarSelection = () => {
   };
 
   const handleAcceptAvatar = (avatarId: string) => {
-    console.log("Selected generated avatar:", avatarId);
+    if (!generatedAvatar) return;
+    
+    // Create a new avatar with a unique ID and add it to the avatarImages array
+    const newAvatar = {
+      id: avatarImages.length + 1,
+      url: generatedAvatar.url,
+      alt: "Generated Avatar",
+      name: `CUSTOM ${new Date().toLocaleDateString()}`,
+      year: new Date().getFullYear().toString(),
+      category: "personal" // Set category to "personal"
+    };
+    
+    setAvatarImages([...avatarImages, newAvatar]);
+    setSelectedAvatar(newAvatar.id);
     setIsGenerateModalOpen(false);
+    
     toast({
       title: "Avatar added",
-      description: "The generated avatar has been added to your collection.",
+      description: "The generated avatar has been added to your Personal collection.",
     });
   };
 
@@ -147,8 +163,8 @@ const AvatarSelection = () => {
   };
 
   const filteredAvatars = activeCategory === "all" 
-    ? AVATAR_IMAGES 
-    : AVATAR_IMAGES.filter(avatar => avatar.category === activeCategory);
+    ? avatarImages 
+    : avatarImages.filter(avatar => avatar.category === activeCategory);
 
   return (
     <PageContainer>
