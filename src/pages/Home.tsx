@@ -1,5 +1,5 @@
 
-import { Plus, Video, Clock, Calendar } from "lucide-react";
+import { Plus, Video, Calendar } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PageContainer from "@/components/layout/PageContainer";
@@ -76,14 +76,10 @@ const Home = () => {
                         />
                       </div>
                       
-                      {/* Project info overlay */}
+                      {/* Project info overlay - simplified to only show title and date */}
                       <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-3">
                         <h3 className="text-white font-medium truncate">{project.title}</h3>
-                        <div className="flex items-center gap-4 mt-1">
-                          <div className="flex items-center text-xs text-gray-300">
-                            <Clock size={12} className="mr-1" />
-                            {project.totalDuration.toFixed(1)}s
-                          </div>
+                        <div className="flex items-center mt-1">
                           <div className="flex items-center text-xs text-gray-300">
                             <Calendar size={12} className="mr-1" />
                             {formatDate(project.createdAt)}
