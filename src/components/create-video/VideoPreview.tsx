@@ -34,7 +34,7 @@ const VideoPreview = ({ activeClipId, clips, totalDuration, maxDuration }: Video
   return (
     <Card className="border-theme-gray/40 bg-theme-black/50 rounded-lg overflow-hidden h-full flex flex-col">
       {/* Video Preview Area */}
-      <div className="relative flex-1 flex items-start gap-4 p-4">
+      <div className="relative flex-1 flex justify-center items-center p-4">
         {/* 9:16 Vertical Video Container */}
         <div className="relative aspect-[9/16] bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] h-full max-h-[500px]">
           {/* Empty Preview Content */}
@@ -49,7 +49,7 @@ const VideoPreview = ({ activeClipId, clips, totalDuration, maxDuration }: Video
         </div>
 
         {/* Badge shown to the right of the video */}
-        <div className="bg-black/80 px-3 py-1 rounded-full flex items-center gap-2 h-fit">
+        <div className="bg-black/80 px-3 py-1 rounded-full flex items-center gap-2 h-fit absolute top-4 right-4">
           <div className="w-5 h-5 rounded-full bg-theme-orange flex items-center justify-center">
             <Video size={12} className="text-white" />
           </div>
