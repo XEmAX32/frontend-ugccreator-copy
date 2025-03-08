@@ -222,7 +222,6 @@ const CreateVideo = () => {
           </div>
         </div>
 
-        {/* Storyboard */}
         <StoryboardSection 
           clips={clips}
           activeClipId={activeClipId}
@@ -235,7 +234,6 @@ const CreateVideo = () => {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Left Column - Script Editor */}
           <div className="space-y-4">
             <ScriptEditor 
               activeClipId={activeClipId}
@@ -251,7 +249,6 @@ const CreateVideo = () => {
             />
           </div>
 
-          {/* Right Column - Video Preview */}
           <div className="relative">
             <VideoPreview 
               activeClipId={activeClipId}
@@ -264,7 +261,6 @@ const CreateVideo = () => {
         </div>
       </div>
 
-      {/* Project Save Dialog */}
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
         <DialogContent className="sm:max-w-md bg-theme-black border-theme-gray/40">
           <DialogHeader>
@@ -317,18 +313,9 @@ const CreateVideo = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Full Video Preview Dialog */}
       <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
-        <DialogContent className="sm:max-w-4xl h-[80vh] bg-theme-black border-theme-gray/40 flex flex-col">
-          <DialogHeader className="flex flex-row items-center justify-between">
-            <DialogTitle className="text-xl text-white">Full Video Preview</DialogTitle>
-            <DialogClose className="h-6 w-6 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none">
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </DialogClose>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-hidden p-1">
+        <DialogContent className="sm:max-w-4xl h-[80vh] bg-theme-black border-theme-gray/40 flex flex-col p-0">
+          <div className="flex-1 overflow-hidden">
             <div className="h-full">
               <VideoPreview 
                 activeClipId={null}
@@ -340,15 +327,19 @@ const CreateVideo = () => {
             </div>
           </div>
           
-          <DialogFooter className="border-t border-theme-gray/20 pt-4">
-            <div className="text-sm text-gray-400">
-              {clips.length} clips · {Math.floor(totalDuration / 60)}:{(totalDuration % 60).toFixed(0).padStart(2, '0')} total duration
-            </div>
-            <Button 
+          <DialogFooter className="border-t border-theme-gray/20 p-4 flex justify-between">
+            <Button
+              variant="outline"
               onClick={() => setShowVideoDialog(false)}
+              className="bg-transparent border-theme-gray/40 text-white hover:bg-theme-black/60"
+            >
+              Close
+            </Button>
+            <Button
+              onClick={handleFinishProject}
               className="bg-theme-orange hover:bg-theme-orange-light"
             >
-              Close Preview
+              Finish Project
             </Button>
           </DialogFooter>
         </DialogContent>
