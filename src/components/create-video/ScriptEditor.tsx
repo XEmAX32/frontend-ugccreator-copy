@@ -127,13 +127,13 @@ const ScriptEditor = ({
             <h3 className="text-sm font-medium text-white/80">Avatar Movements & Product Interaction</h3>
             <div className="flex items-center gap-2">
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm"
                 onClick={(e) => {
                   e.preventDefault(); // Prevent form submission
                   setShowMovementHints(true);
                 }}
-                className="h-7 px-2 text-white hover:bg-theme-gray/30"
+                className="h-7 px-2 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md"
               >
                 <Lightbulb size={14} className="text-theme-orange mr-1" />
                 <span className="text-xs">Hints</span>
@@ -141,8 +141,8 @@ const ScriptEditor = ({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
-                    variant="outline" 
-                    className="px-3 py-1 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md flex items-center gap-2"
+                    variant="ghost" 
+                    className="px-3 py-1 hover:bg-theme-gray/30 text-white flex items-center gap-2"
                     onClick={(e) => e.preventDefault()} // Prevent form submission
                   >
                     <Package size={16} />
@@ -176,13 +176,13 @@ const ScriptEditor = ({
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-white/80">Avatar Speech</h3>
             <Button 
-              variant="ghost" 
+              variant="outline" 
               size="sm"
               onClick={(e) => {
                 e.preventDefault(); // Prevent form submission
                 setShowSpeechHints(true);
               }}
-              className="h-7 px-2 text-white hover:bg-theme-gray/30"
+              className="h-7 px-2 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md"
             >
               <Lightbulb size={14} className="text-theme-orange mr-1" />
               <span className="text-xs">Hints</span>
