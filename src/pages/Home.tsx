@@ -1,5 +1,6 @@
-import { Plus, Clock } from "lucide-react";
-import { Link } from "react-router-dom";
+
+import { Plus, Clock, Video } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,6 +25,12 @@ const projectFormats = [{
   type: "youtube"
 }];
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate("/avatar-selection");
+  };
+
   return <PageContainer>
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-6xl mx-auto">
@@ -75,9 +82,16 @@ const Home = () => {
               </div>
             </div>}
 
-          {mockProjects.length === 0 && <Card className="border-theme-gray mt-8 bg-transparent">
+          {mockProjects.length === 0 && <Card 
+              className="border-theme-gray mt-8 bg-transparent cursor-pointer hover:bg-theme-gray/10 transition-all"
+              onClick={handleCardClick}
+            >
               <CardContent className="p-8">
-                <div className="text-center py-8">
+                <div className="text-center py-8 flex flex-col items-center gap-4">
+                  <div className="bg-theme-black/70 rounded-full p-2 flex items-center">
+                    <Video size={24} className="text-theme-orange" />
+                    <span className="text-xs text-gray-400 ml-2">TikTok • 20s</span>
+                  </div>
                   <p className="text-xl text-muted-foreground italic">
                     Ready to bring your creative vision to life? Create your first project!
                   </p>
