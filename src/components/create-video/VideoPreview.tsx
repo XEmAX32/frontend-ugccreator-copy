@@ -25,7 +25,7 @@ const VideoPreview = ({ activeClipId, clips, totalDuration, maxDuration }: Video
               <Video size={12} className="text-white" />
             </div>
             <span className="text-xs font-medium text-white">
-              {activeClipId ? `${activeClipIndex + 1}` : "Full Video"}
+              {activeClipId ? `Clip ${activeClipIndex + 1}` : "Full Video"}
             </span>
           </div>
         </div>
@@ -49,7 +49,7 @@ const VideoPreview = ({ activeClipId, clips, totalDuration, maxDuration }: Video
                 <div className="flex flex-col gap-2 mt-4">
                   {clips.map((clip, index) => (
                     <div key={clip.id} className="text-sm text-left p-2 border border-theme-gray/20 rounded bg-black/40">
-                      <div className="text-theme-orange text-xs font-medium mb-1">{index + 1} - {clip.durationSeconds}s</div>
+                      <div className="text-theme-orange text-xs font-medium mb-1">Clip {index + 1} - {clip.durationSeconds}s</div>
                       <div className="text-white/80 text-xs truncate">{clip.text}</div>
                     </div>
                   ))}
