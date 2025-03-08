@@ -42,7 +42,7 @@ const StoryboardSection = ({
         {/* Timeline tracker */}
         <div className="absolute -bottom-1 left-0 right-0 h-1 bg-gray-700/50 z-0">
           <div 
-            className="h-full bg-theme-orange"
+            className="h-full bg-gray-400"
             style={{ width: `${(totalDuration / maxDuration) * 100}%` }}
           ></div>
         </div>
