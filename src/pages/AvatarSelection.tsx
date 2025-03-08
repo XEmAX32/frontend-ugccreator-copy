@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, Wand2, RefreshCw, Loader2 } from "lucide-react";
@@ -123,14 +122,13 @@ const AvatarSelection = () => {
   const handleAcceptAvatar = (avatarId: string) => {
     if (!generatedAvatar) return;
     
-    // Create a new avatar with a unique ID and add it to the avatarImages array
     const newAvatar = {
       id: avatarImages.length + 1,
       url: generatedAvatar.url,
       alt: "Generated Avatar",
       name: `CUSTOM ${new Date().toLocaleDateString()}`,
       year: new Date().getFullYear().toString(),
-      category: "personal" // Set category to "personal"
+      category: "personal"
     };
     
     setAvatarImages([...avatarImages, newAvatar]);
@@ -240,14 +238,6 @@ const AvatarSelection = () => {
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent pt-8 pb-3 px-3">
                     <span className="text-white text-lg font-bold">{avatar.name}</span>
                   </div>
-                  
-                  {avatar.id === 1 && (
-                    <div className="absolute bottom-3 right-3">
-                      <div className="bg-amber-500 text-black text-xs px-2 py-0.5 rounded-full font-medium">
-                        Premium
-                      </div>
-                    </div>
-                  )}
                   
                   {selectedAvatar === avatar.id && (
                     <div className="absolute top-3 right-3">
