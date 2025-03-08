@@ -1,14 +1,27 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Video } from "lucide-react";
+import { ArrowLeft, HelpCircle, Send, Video } from "lucide-react";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+const promptExamples = [
+  "Create a 30-second video explaining why effective time management is crucial for entrepreneurs.",
+  "I need a concise explanation of how blockchain technology works for beginners.",
+  "Generate a video introducing my new fitness app with energetic and motivational tone.",
+  "Create a professional welcome message for my company website highlighting our core values."
+];
 
 const CreateVideo = () => {
   const [promptText, setPromptText] = useState("");
+  const [showExamples, setShowExamples] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -16,6 +29,11 @@ const CreateVideo = () => {
     // In a real app, you would process the prompt here
     console.log("Submitting prompt:", promptText);
     // Navigate to the next step (would be implemented in a real app)
+  };
+
+  const insertExample = (example: string) => {
+    setPromptText(example);
+    setShowExamples(false);
   };
 
   return (
@@ -36,6 +54,43 @@ const CreateVideo = () => {
           {/* Left Column - Script Editor */}
           <div className="space-y-4">
             <Card className="border-theme-gray/40 bg-theme-black/80 p-6 rounded-lg">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg text-white font-medium">Write Your Script</h2>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => setShowExamples(!showExamples)}
+                      className="bg-theme-orange hover:bg-theme-orange-light text-white border-none rounded-full"
+                    >
+                      <HelpCircle size={18} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click for prompt examples</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              
+              {showExamples && (
+                <div className="mb-4 p-4 bg-theme-black/70 border border-theme-gray/30 rounded-md">
+                  <h3 className="text-sm font-medium text-theme-orange mb-2">Prompt Examples:</h3>
+                  <ul className="space-y-2">
+                    {promptExamples.map((example, index) => (
+                      <li key={index}>
+                        <button 
+                          onClick={() => insertExample(example)}
+                          className="text-xs text-white/80 hover:text-theme-orange text-left w-full p-2 rounded hover:bg-theme-gray/20 transition-colors"
+                        >
+                          {example}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
               <form onSubmit={handleSubmit} className="flex flex-col h-full">
                 <Textarea
                   placeholder="Have you ever wondered why the advice on scaling your startup sometimes backfires? Write your script here..."
