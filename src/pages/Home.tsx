@@ -77,7 +77,7 @@ const Home = () => {
                       </div>
                       
                       {/* Project info overlay - simplified to only show title and date */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-3">
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/90 p-3">
                         <h3 className="text-white font-medium truncate">{project.title}</h3>
                         <div className="flex items-center mt-1">
                           <div className="flex items-center text-xs text-gray-300">
