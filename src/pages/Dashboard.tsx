@@ -28,11 +28,12 @@ const Dashboard = () => {
                     Create a new project or manage your existing ones.
                   </p>
                   <Button 
-                    as={Link} 
-                    to="/avatar-selection"
+                    asChild 
                     className="bg-theme-orange hover:bg-theme-orange-light flex items-center gap-2"
                   >
-                    <Plus size={18} /> New Project
+                    <Link to="/avatar-selection">
+                      <Plus size={18} /> New Project
+                    </Link>
                   </Button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
