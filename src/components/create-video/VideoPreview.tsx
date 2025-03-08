@@ -117,17 +117,7 @@ const VideoPreview = ({
           </div>
         </div>
 
-        {/* Badge shown to the right of the video */}
-        <div className="bg-black/80 px-3 py-1 rounded-full flex items-center gap-2 h-fit absolute top-4 right-4">
-          <div className="w-5 h-5 rounded-full bg-theme-orange flex items-center justify-center">
-            <Video size={12} className="text-white" />
-          </div>
-          <span className="text-xs font-medium text-white">
-            {isFullscreen 
-              ? `Clip ${currentClipIndex + 1} of ${clips.length}` 
-              : activeClipId ? `Clip ${activeClipIndex + 1}` : `Clip ${clips.length}`}
-          </span>
-        </div>
+        {/* Removed the clip info badge that was here */}
       </div>
 
       {/* Video Controls */}
