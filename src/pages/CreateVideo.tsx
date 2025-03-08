@@ -1,14 +1,14 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Eye } from "lucide-react";
+import { ArrowLeft, Clock, Eye, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import PageContainer from "@/components/layout/PageContainer";
 import StoryboardSection from "@/components/create-video/StoryboardSection";
 import ScriptEditor from "@/components/create-video/ScriptEditor";
 import VideoPreview from "@/components/create-video/VideoPreview";
-import { VideoClip } from "@/types/video";
+import { VideoClip, VideoProject } from "@/types/video";
 
 const promptExamples = [
   "Create a 30-second video explaining why effective time management is crucial for entrepreneurs.",
@@ -94,6 +94,56 @@ const CreateVideo = () => {
     setPromptText("");
   };
 
+  const handleDownloadVideo = () => {
+    // In a real app, this would trigger the video rendering and download
+    toast({
+      title: "Download started",
+      description: "Your video is being prepared for download."
+    });
+    
+    // Simulate download delay
+    setTimeout(() => {
+      toast({
+        title: "Download ready",
+        description: "Your video has been downloaded."
+      });
+    }, 2000);
+  };
+
+  const handleFinishProject = () => {
+    if (clips.length === 0) {
+      toast({
+        title: "No clips to save",
+        description: "Please create at least one clip before finishing.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Create a new project object
+    const newProject: VideoProject = {
+      id: String(Date.now()),
+      title: `Video Project ${new Date().toLocaleDateString()}`,
+      clips: [...clips],
+      thumbnail: clips[0].thumbnail,
+      createdAt: new Date().toISOString(),
+      totalDuration
+    };
+    
+    // Save to localStorage (in a real app, this would go to a database)
+    const existingProjects = JSON.parse(localStorage.getItem('videoProjects') || '[]');
+    const updatedProjects = [newProject, ...existingProjects];
+    localStorage.setItem('videoProjects', JSON.stringify(updatedProjects));
+    
+    toast({
+      title: "Project saved",
+      description: "Your video project has been saved successfully."
+    });
+    
+    // Navigate back to the home page
+    navigate("/home");
+  };
+
   const activeClipText = activeClipId 
     ? clips.find(c => c.id === activeClipId)?.text 
     : "";
@@ -125,6 +175,14 @@ const CreateVideo = () => {
               className="ml-2 text-xs bg-theme-black/40 border-theme-gray/30 hover:bg-theme-black/60"
             >
               <Eye size={16} className="mr-1" /> View Full Video
+            </Button>
+            
+            <Button
+              onClick={handleFinishProject}
+              variant="default"
+              className="ml-2 bg-theme-orange hover:bg-theme-orange-light"
+            >
+              <Save size={16} className="mr-1" /> Finish
             </Button>
           </div>
         </div>
@@ -165,6 +223,7 @@ const CreateVideo = () => {
               clips={clips}
               totalDuration={totalDuration}
               maxDuration={maxDuration}
+              onDownload={handleDownloadVideo}
             />
           </div>
         </div>

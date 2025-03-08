@@ -1,5 +1,5 @@
 
-import { Film, Video, Play, Pause, Volume2, VolumeX } from "lucide-react";
+import { Film, Video, Play, Pause, Volume2, VolumeX, Download } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { VideoClip } from "@/types/video";
 import { useState } from "react";
@@ -10,9 +10,16 @@ interface VideoPreviewProps {
   clips: VideoClip[];
   totalDuration: number;
   maxDuration: number;
+  onDownload?: () => void;
 }
 
-const VideoPreview = ({ activeClipId, clips, totalDuration, maxDuration }: VideoPreviewProps) => {
+const VideoPreview = ({ 
+  activeClipId, 
+  clips, 
+  totalDuration, 
+  maxDuration,
+  onDownload
+}: VideoPreviewProps) => {
   const activeClip = activeClipId ? clips.find(c => c.id === activeClipId) : null;
   const activeClipIndex = activeClipId ? clips.findIndex(c => c.id === activeClipId) : -1;
   const [isPlaying, setIsPlaying] = useState(false);
@@ -57,6 +64,18 @@ const VideoPreview = ({ activeClipId, clips, totalDuration, maxDuration }: Video
             {activeClipId ? `Clip ${activeClipIndex + 1}` : `Clip ${clips.length}`}
           </span>
         </div>
+        
+        {/* Download button */}
+        {clips.length > 0 && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onDownload}
+            className="absolute top-4 left-4 h-8 w-8 rounded-full bg-theme-orange hover:bg-theme-orange-light"
+          >
+            <Download size={16} className="text-white" />
+          </Button>
+        )}
       </div>
 
       {/* Video Controls */}

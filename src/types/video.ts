@@ -5,3 +5,12 @@ export interface VideoClip {
   text: string;
   durationSeconds: number;
 }
+
+export interface VideoProject {
+  id: string;
+  title: string;
+  clips: VideoClip[];
+  thumbnail: string;
+  createdAt: string;
+  totalDuration: number;
+}
