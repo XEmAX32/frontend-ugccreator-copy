@@ -34,7 +34,7 @@ const Home = () => {
               {/* Projects would be mapped here */}
             </div>
           ) : (
-            <div className="flex justify-center">
+            <div className="flex justify-start">
               <Card 
                 className="border-theme-gray mt-8 bg-transparent cursor-pointer hover:bg-theme-gray/10 transition-all w-64 max-w-xs"
                 onClick={handleCardClick}
