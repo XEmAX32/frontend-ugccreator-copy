@@ -9,6 +9,15 @@ import StoryboardSection from "@/components/create-video/StoryboardSection";
 import ScriptEditor from "@/components/create-video/ScriptEditor";
 import VideoPreview from "@/components/create-video/VideoPreview";
 import { VideoClip, VideoProject } from "@/types/video";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const promptExamples = [
   "Create a 30-second video explaining why effective time management is crucial for entrepreneurs.",
@@ -29,6 +38,8 @@ const CreateVideo = () => {
       durationSeconds: 5
     }
   ]);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [projectTitle, setProjectTitle] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -120,10 +131,25 @@ const CreateVideo = () => {
       return;
     }
     
+    // Open the save dialog to get the project name
+    setShowSaveDialog(true);
+  };
+
+  const handleSaveProject = () => {
+    // Validate project title
+    if (!projectTitle.trim()) {
+      toast({
+        title: "Project name required",
+        description: "Please enter a name for your project.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     // Create a new project object
     const newProject: VideoProject = {
       id: String(Date.now()),
-      title: `Video Project ${new Date().toLocaleDateString()}`,
+      title: projectTitle.trim(),
       clips: [...clips],
       thumbnail: clips[0].thumbnail,
       createdAt: new Date().toISOString(),
@@ -140,7 +166,8 @@ const CreateVideo = () => {
       description: "Your video project has been saved successfully."
     });
     
-    // Navigate back to the home page
+    // Close dialog and navigate back to the home page
+    setShowSaveDialog(false);
     navigate("/home");
   };
 
@@ -228,6 +255,46 @@ const CreateVideo = () => {
           </div>
         </div>
       </div>
+
+      {/* Project Save Dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent className="sm:max-w-md bg-theme-black border-theme-gray/40">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-white">Save Your Project</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="project-name" className="text-white">Project Name</Label>
+                <Input
+                  id="project-name"
+                  placeholder="Enter a name for your project"
+                  value={projectTitle}
+                  onChange={(e) => setProjectTitle(e.target.value)}
+                  className="bg-theme-black/80 border-theme-gray/40 text-white"
+                  autoFocus
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowSaveDialog(false)}
+              className="bg-transparent border-theme-gray/40 text-white hover:bg-theme-black/60"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              onClick={handleSaveProject}
+              className="bg-theme-orange hover:bg-theme-orange-light text-white"
+            >
+              Save Project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageContainer>
   );
 };
