@@ -1,6 +1,10 @@
 
+import { Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 import UserProfile from "@/components/auth/UserProfile";
 import PageContainer from "@/components/layout/PageContainer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Dashboard = () => {
   return (
@@ -14,25 +18,37 @@ const Dashboard = () => {
           </div>
           
           <div className="md:col-span-2 space-y-6">
-            <div className="bg-card rounded-lg border border-theme-gray p-6">
-              <h2 className="text-xl font-semibold mb-4">Welcome!</h2>
-              <p className="text-muted-foreground">
-                This is your authenticated dashboard. You can now access protected features of the application.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <DashboardCard 
-                title="User Sessions" 
-                value="1" 
-                description="Active session" 
-              />
-              <DashboardCard 
-                title="Authentication" 
-                value="Secure" 
-                description="Your connection is secure" 
-              />
-            </div>
+            <Card className="border-theme-gray">
+              <CardHeader>
+                <CardTitle className="text-xl">Your Projects</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-muted-foreground">
+                    Create a new project or manage your existing ones.
+                  </p>
+                  <Button 
+                    as={Link} 
+                    to="/avatar-selection"
+                    className="bg-theme-orange hover:bg-theme-orange-light flex items-center gap-2"
+                  >
+                    <Plus size={18} /> New Project
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                  <DashboardCard 
+                    title="User Sessions" 
+                    value="1" 
+                    description="Active session" 
+                  />
+                  <DashboardCard 
+                    title="Authentication" 
+                    value="Secure" 
+                    description="Your connection is secure" 
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
