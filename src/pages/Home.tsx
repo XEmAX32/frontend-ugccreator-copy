@@ -29,30 +29,37 @@ const Home = () => {
           {/* Page Title */}
           <h1 className="text-2xl font-bold mb-6 text-white">Your Projects</h1>
           
-          {mockProjects.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-              {/* Projects would be mapped here */}
-            </div>
-          ) : (
-            <div className="flex justify-start">
-              <Card 
-                className="border-theme-gray mt-8 bg-transparent cursor-pointer hover:bg-theme-gray/10 transition-all w-64 max-w-xs"
-                onClick={handleCardClick}
-              >
-                <CardContent className="p-6 flex flex-col items-center justify-center h-96">
-                  <div className="text-center py-8 flex flex-col items-center gap-4">
-                    <div className="bg-theme-black/70 rounded-full p-2 flex items-center">
-                      <Video size={24} className="text-theme-orange" />
-                      <span className="text-xs text-gray-400 ml-2">TikTok • 20s</span>
+          {/* Gallery with background and frame */}
+          <div className="relative rounded-xl bg-[#221F26] p-6 shadow-lg overflow-hidden">
+            {/* Decorative top-left corner radius */}
+            <div className="absolute top-0 left-0 w-12 h-12 rounded-tl-xl bg-[#221F26] border-t border-l border-[#403E43]/40"></div>
+            
+            {/* Gallery content */}
+            {mockProjects.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+                {/* Projects would be mapped here */}
+              </div>
+            ) : (
+              <div className="flex justify-start">
+                <Card 
+                  className="border border-[#8A898C] mt-4 bg-transparent cursor-pointer hover:bg-[#403E43]/20 transition-all w-64 max-w-xs rounded-xl overflow-hidden"
+                  onClick={handleCardClick}
+                >
+                  <CardContent className="p-6 flex flex-col items-center justify-center h-96">
+                    <div className="text-center py-8 flex flex-col items-center gap-4">
+                      <div className="bg-theme-black/70 rounded-full p-2 flex items-center">
+                        <Video size={24} className="text-theme-orange" />
+                        <span className="text-xs text-gray-400 ml-2">TikTok • 20s</span>
+                      </div>
+                      <p className="text-xl text-muted-foreground italic max-w-md">
+                        Create your first project!
+                      </p>
                     </div>
-                    <p className="text-xl text-muted-foreground italic max-w-md">
-                      Create your first project!
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </PageContainer>

@@ -61,6 +61,12 @@ export default {
 					'orange-dark': '#EA580C',
 					gray: '#363636',
 					'gray-light': '#525252'
+				},
+				// Additional colors for the gallery frame
+				gallery: {
+					frame: '#221F26',
+					border: '#403E43',
+					card: '#8A898C'
 				}
 			},
 			borderRadius: {
