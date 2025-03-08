@@ -8,12 +8,11 @@ interface AddClipButtonProps {
 const AddClipButton = ({ onClick }: AddClipButtonProps) => {
   return (
     <div 
-      className="w-24 h-16 flex-shrink-0 border border-dashed border-theme-gray/40 rounded-md flex items-center justify-center cursor-pointer bg-theme-black/40 hover:bg-theme-black/60 transition-colors"
+      className="w-20 h-14 flex-shrink-0 rounded-lg flex items-center justify-center cursor-pointer bg-yellow-600/70 hover:bg-yellow-500/80 transition-colors border border-yellow-500/30"
       onClick={onClick}
     >
-      <div className="flex flex-col items-center">
-        <Plus size={18} className="text-theme-orange" />
-        <span className="text-[9px] text-white/70 mt-1">Add Clip</span>
+      <div className="flex items-center justify-center">
+        <Plus size={20} className="text-white" />
       </div>
     </div>
   );
