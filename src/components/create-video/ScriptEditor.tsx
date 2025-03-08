@@ -34,6 +34,7 @@ interface ScriptEditorProps {
 }
 
 const PRODUCT_OPTIONS = [
+  "No Product",
   "Smartphone",
   "Laptop",
   "Headphones",
@@ -89,6 +90,11 @@ const ScriptEditor = ({
 
   // When a product is selected, update the state and add it to the movements text
   const handleProductSelect = (product: string) => {
+    if (product === "No Product") {
+      setSelectedProduct(null);
+      return;
+    }
+    
     setSelectedProduct(product);
     setAvatarMovements((prev) => 
       prev ? `${prev}\nInteract with ${product}` : `Interact with ${product}`
@@ -130,7 +136,7 @@ const ScriptEditor = ({
                 <DropdownMenuTrigger asChild>
                   <Button 
                     variant="ghost" 
-                    className="px-3 py-1 hover:bg-theme-gray/30 text-white flex items-center gap-2"
+                    className="h-7 px-3 py-1 bg-theme-gray/30 hover:bg-theme-gray/50 text-white flex items-center gap-2 border-none rounded-md shadow-md"
                     onClick={(e) => e.preventDefault()} // Prevent form submission
                   >
                     <Package size={16} />
