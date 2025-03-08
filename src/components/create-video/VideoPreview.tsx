@@ -32,55 +32,29 @@ const VideoPreview = ({ activeClipId, clips, totalDuration, maxDuration }: Video
   const progressPercentage = (currentTime / (activeClipId ? activeClipDuration : totalDuration)) * 100;
 
   return (
-    <Card className="border-theme-gray/40 bg-theme-black/50 rounded-lg overflow-hidden h-full min-h-[400px] flex flex-col">
+    <Card className="border-theme-gray/40 bg-theme-black/50 rounded-lg overflow-hidden h-full flex flex-col">
       {/* Video Preview Area */}
-      <div className="relative flex-1 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] overflow-hidden">
-        {/* Avatar Badge */}
-        <div className="absolute top-4 right-4 z-10">
-          <div className="bg-black/80 px-3 py-1 rounded-full flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-theme-orange flex items-center justify-center">
-              <Video size={12} className="text-white" />
-            </div>
-            <span className="text-xs font-medium text-white">
-              {activeClipId ? `Clip ${activeClipIndex + 1}` : "Full Video"}
-            </span>
-          </div>
-        </div>
-
-        {/* Preview Content */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center w-full px-8">
-            {activeClipId && activeClip ? (
-              <h2 className="text-2xl font-bold">
-                <span className="text-white">{activeClip.text.split(' ').slice(0, 3).join(' ').toUpperCase()} </span>
-                <span className="text-theme-orange">{activeClip.text.split(' ').slice(3, 4).join(' ').toUpperCase()}</span>
-                <br />
-                <span className="text-white">{activeClip.text.split(' ').slice(4, 8).join(' ').toUpperCase()}</span>
-              </h2>
-            ) : clips.length > 0 ? (
-              <div>
-                <h2 className="text-2xl font-bold">
-                  <span className="text-white">FULL VIDEO</span>
-                  <span className="text-theme-orange"> PREVIEW</span>
-                </h2>
-                <div className="flex flex-col gap-2 mt-4">
-                  {clips.map((clip, index) => (
-                    <div key={clip.id} className="text-sm text-left p-2 border border-theme-gray/20 rounded bg-black/40">
-                      <div className="text-theme-orange text-xs font-medium mb-1">Clip {index + 1} - {clip.durationSeconds}s</div>
-                      <div className="text-white/80 text-xs truncate">{clip.text}</div>
-                    </div>
-                  ))}
-                </div>
+      <div className="relative flex-1 flex justify-center">
+        {/* 9:16 Vertical Video Container */}
+        <div className="relative aspect-[9/16] bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] h-full max-h-[500px]">
+          {/* Avatar Badge */}
+          <div className="absolute top-4 right-4 z-10">
+            <div className="bg-black/80 px-3 py-1 rounded-full flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-theme-orange flex items-center justify-center">
+                <Video size={12} className="text-white" />
               </div>
-            ) : (
+              <span className="text-xs font-medium text-white">
+                {activeClipId ? `Clip ${activeClipIndex + 1}` : `Clip ${clips.length}`}
+              </span>
+            </div>
+          </div>
+
+          {/* Empty Preview Content */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            {clips.length === 0 && (
               <div className="text-white/70">
                 <Film size={48} className="mx-auto mb-4 text-theme-orange/50" />
                 Add your first clip to begin creating your video
-              </div>
-            )}
-            {!activeClipId && clips.length === 0 && (
-              <div className="mt-2 text-xs text-gray-400">
-                Your video clips will appear here
               </div>
             )}
           </div>
