@@ -34,22 +34,24 @@ const Home = () => {
               {/* Projects would be mapped here */}
             </div>
           ) : (
-            <Card 
-              className="border-theme-gray mt-8 bg-transparent cursor-pointer hover:bg-theme-gray/10 transition-all"
-              onClick={handleCardClick}
-            >
-              <CardContent className="p-8 flex flex-col items-center justify-center">
-                <div className="text-center py-12 flex flex-col items-center gap-4">
-                  <div className="bg-theme-black/70 rounded-full p-2 flex items-center">
-                    <Video size={24} className="text-theme-orange" />
-                    <span className="text-xs text-gray-400 ml-2">TikTok • 20s</span>
+            <div className="flex justify-center">
+              <Card 
+                className="border-theme-gray mt-8 bg-transparent cursor-pointer hover:bg-theme-gray/10 transition-all w-64 max-w-xs"
+                onClick={handleCardClick}
+              >
+                <CardContent className="p-6 flex flex-col items-center justify-center h-96">
+                  <div className="text-center py-8 flex flex-col items-center gap-4">
+                    <div className="bg-theme-black/70 rounded-full p-2 flex items-center">
+                      <Video size={24} className="text-theme-orange" />
+                      <span className="text-xs text-gray-400 ml-2">TikTok • 20s</span>
+                    </div>
+                    <p className="text-xl text-muted-foreground italic max-w-md">
+                      Create your first project!
+                    </p>
                   </div>
-                  <p className="text-xl text-muted-foreground italic max-w-md">
-                    Create your first project!
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           )}
         </div>
       </div>
