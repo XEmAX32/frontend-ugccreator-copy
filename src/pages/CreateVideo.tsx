@@ -21,67 +21,84 @@ const CreateVideo = () => {
   return (
     <PageContainer>
       <div className="container mx-auto px-4 py-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/avatar-selection")}
-              className="mr-4"
-            >
-              <ArrowLeft size={20} />
-            </Button>
-            <h1 className="text-2xl font-bold">Choose Your Next Move: Direct the Action and Guide Your Avatar</h1>
+        <div className="flex items-center mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate("/avatar-selection")}
+            className="mr-4"
+          >
+            <ArrowLeft size={20} />
+          </Button>
+          <h1 className="text-xl font-bold">Create Your Video</h1>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column - Script Editor */}
+          <div className="space-y-4">
+            <Card className="border-theme-gray/40 bg-theme-black/80 p-6 rounded-lg">
+              <form onSubmit={handleSubmit} className="flex flex-col h-full">
+                <Textarea
+                  placeholder="Have you ever wondered why the advice on scaling your startup sometimes backfires? Write your script here..."
+                  className="min-h-[400px] resize-none bg-transparent border-theme-gray-light/30 focus:border-theme-orange text-white"
+                  value={promptText}
+                  onChange={(e) => setPromptText(e.target.value)}
+                />
+                
+                <div className="flex justify-end mt-4">
+                  <Button 
+                    type="submit"
+                    className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
+                    disabled={!promptText.trim()}
+                  >
+                    Generate Video <Send size={16} />
+                  </Button>
+                </div>
+              </form>
+            </Card>
           </div>
 
-          <Card className="border-theme-gray/40 bg-theme-black/50 p-6">
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Vertical Image Column */}
-              <div className="w-full md:w-2/5 lg:w-1/3">
-                <div className="relative aspect-[3/4] rounded-xl overflow-hidden border border-gallery-border">
-                  <img 
-                    src="https://images.unsplash.com/photo-1535268647677-300dbf3d78d1" 
-                    alt="Avatar reference" 
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Video size={20} className="text-theme-orange" />
-                      <span className="text-sm font-medium">TikTok Video • 20s</span>
+          {/* Right Column - Video Preview */}
+          <div className="relative">
+            <Card className="border-theme-gray/40 bg-theme-black/50 rounded-lg overflow-hidden h-full min-h-[400px] flex flex-col">
+              {/* Video Preview Area */}
+              <div className="relative flex-1 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] overflow-hidden">
+                {/* Avatar Badge */}
+                <div className="absolute top-4 right-4 z-10">
+                  <div className="bg-black/80 px-3 py-1 rounded-full flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-theme-orange flex items-center justify-center">
+                      <Video size={12} className="text-white" />
                     </div>
-                    <h3 className="text-lg font-bold">Your Avatar</h3>
-                    <p className="text-sm text-gray-300">Ready for direction</p>
+                    <span className="text-xs font-medium text-white">Gesture 1</span>
+                  </div>
+                </div>
+
+                {/* Preview Content */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center w-full px-8">
+                    <h2 className="text-2xl font-bold">
+                      <span className="text-white">HAVE YOU </span>
+                      <span className="text-theme-orange">EVER</span>
+                      <br />
+                      <span className="text-white">WONDERED WHY THE</span>
+                    </h2>
+                    <div className="mt-2 text-xs text-gray-400">
+                      This is a preview, click generate
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Text Prompt Column */}
-              <div className="w-full md:w-3/5 lg:w-2/3">
-                <form onSubmit={handleSubmit} className="h-full flex flex-col">
-                  <h2 className="text-xl font-semibold mb-4">Enter Your Directions</h2>
-                  
-                  <div className="flex-grow mb-4">
-                    <Textarea
-                      placeholder="Describe what you want your avatar to do or say. Be specific about actions, expressions, and tone. For example: 'Explain the benefits of meditation while smiling and using hand gestures for emphasis.'"
-                      className="min-h-[240px] resize-none bg-theme-black/70 border-theme-gray-light/30 focus:border-theme-orange"
-                      value={promptText}
-                      onChange={(e) => setPromptText(e.target.value)}
-                    />
+              {/* Video Controls */}
+              <div className="p-4 border-t border-theme-gray/20 flex justify-between items-center">
+                <div className="text-xs text-gray-400">Preview</div>
+                <div className="flex items-center gap-2">
+                  <div className="w-16 h-1 bg-theme-gray/30 rounded-full">
+                    <div className="w-1/3 h-full bg-theme-orange rounded-full"></div>
                   </div>
-                  
-                  <div className="flex justify-end">
-                    <Button 
-                      type="submit"
-                      className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
-                      disabled={!promptText.trim()}
-                    >
-                      Generate Video <Send size={16} />
-                    </Button>
-                  </div>
-                </form>
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         </div>
       </div>
     </PageContainer>
