@@ -1,15 +1,21 @@
 
-import { Plus, Video, Calendar } from "lucide-react";
+import { Plus, Video, Calendar, Download } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { VideoProject } from "@/types/video";
+import { Dialog, DialogContent, DialogClose, DialogFooter } from "@/components/ui/dialog";
+import VideoPreview from "@/components/create-video/VideoPreview";
+import { useToast } from "@/hooks/use-toast";
 
 const Home = () => {
   const [projects, setProjects] = useState<VideoProject[]>([]);
+  const [selectedProject, setSelectedProject] = useState<VideoProject | null>(null);
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   useEffect(() => {
     // Load projects from localStorage
@@ -19,10 +25,10 @@ const Home = () => {
 
   const handleCardClick = (project?: VideoProject) => {
     if (project) {
-      // In a real app, this would navigate to an edit page for the project
+      // Show the project in a dialog
+      setSelectedProject(project);
+      setShowVideoDialog(true);
       console.log("Viewing project:", project);
-      // For now, we'll just show the create page
-      navigate("/create-video");
     } else {
       navigate("/avatar-selection");
     }
@@ -31,6 +37,22 @@ const Home = () => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  };
+  
+  const handleDownloadVideo = () => {
+    // In a real app, this would trigger the video rendering and download
+    toast({
+      title: "Download started",
+      description: "Your video is being prepared for download."
+    });
+    
+    // Simulate download delay
+    setTimeout(() => {
+      toast({
+        title: "Download ready",
+        description: "Your video has been downloaded."
+      });
+    }, 2000);
   };
   
   return (
@@ -130,6 +152,43 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      {/* Project Preview Dialog */}
+      <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
+        <DialogContent className="sm:max-w-[90vh] h-[90vh] bg-theme-black border-theme-gray/40 flex flex-col p-0">
+          <div className="flex-1 overflow-hidden">
+            <div className="h-full flex items-center justify-center">
+              {selectedProject && (
+                <VideoPreview 
+                  activeClipId={null}
+                  clips={selectedProject.clips}
+                  totalDuration={selectedProject.totalDuration}
+                  maxDuration={20}
+                  isFullscreen={true}
+                />
+              )}
+            </div>
+          </div>
+          
+          <DialogFooter className="border-t border-theme-gray/20 p-4 flex justify-between">
+            <DialogClose asChild>
+              <Button
+                variant="outline"
+                className="bg-transparent border-theme-gray/40 text-white hover:bg-theme-black/60"
+              >
+                Close
+              </Button>
+            </DialogClose>
+            <Button
+              onClick={handleDownloadVideo}
+              className="bg-theme-orange hover:bg-theme-orange-light flex items-center gap-2"
+            >
+              <Download size={16} />
+              Download Video
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageContainer>
   );
 };
