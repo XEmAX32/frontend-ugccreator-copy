@@ -5,11 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -116,21 +111,6 @@ const ScriptEditor = ({
         <h2 className="text-lg text-white font-medium">
           {activeClipId ? "Edit Clip Script" : "Write New Clip Script"}
         </h2>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button 
-              variant="outline" 
-              onClick={onToggleExamples}
-              className="px-3 py-1 bg-theme-orange hover:bg-theme-orange-light text-white border-none rounded-md shadow-md flex items-center gap-2"
-            >
-              <Hand size={16} />
-              <span className="font-medium text-sm">Click me for help</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Click for prompt examples</p>
-          </TooltipContent>
-        </Tooltip>
       </div>
       
       {showExamples && (
@@ -149,7 +129,10 @@ const ScriptEditor = ({
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => setShowMovementHints(true)}
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent form submission
+                  setShowMovementHints(true);
+                }}
                 className="h-7 px-2 text-white hover:bg-theme-gray/30"
               >
                 <Lightbulb size={14} className="text-theme-orange mr-1" />
@@ -160,6 +143,7 @@ const ScriptEditor = ({
                   <Button 
                     variant="outline" 
                     className="px-3 py-1 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md flex items-center gap-2"
+                    onClick={(e) => e.preventDefault()} // Prevent form submission
                   >
                     <Package size={16} />
                     <span className="font-medium text-sm">{selectedProduct || "Select Product"}</span>
@@ -194,7 +178,10 @@ const ScriptEditor = ({
             <Button 
               variant="ghost" 
               size="sm"
-              onClick={() => setShowSpeechHints(true)}
+              onClick={(e) => {
+                e.preventDefault(); // Prevent form submission
+                setShowSpeechHints(true);
+              }}
               className="h-7 px-2 text-white hover:bg-theme-gray/30"
             >
               <Lightbulb size={14} className="text-theme-orange mr-1" />
