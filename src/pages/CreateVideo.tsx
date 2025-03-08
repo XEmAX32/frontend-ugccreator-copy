@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock, Eye, Film, Hand, HelpCircle, Plus, Send, Trash, Video } from "lucide-react";
@@ -141,7 +140,7 @@ const CreateVideo = () => {
             </div>
           </div>
           
-          <div className="flex gap-3 overflow-x-auto pb-2 storyboard">
+          <div className="flex gap-3 overflow-x-auto pb-4 storyboard no-scrollbar" style={{ overflowX: 'auto', minHeight: '90px', paddingBottom: '8px' }}>
             {clips.map(clip => (
               <div 
                 key={clip.id}
