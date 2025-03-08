@@ -1,4 +1,3 @@
-
 import { Film, Video, Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { VideoClip } from "@/types/video";
@@ -38,7 +37,6 @@ const VideoPreview = ({
     setIsMuted(!isMuted);
   };
 
-  // For full video mode, handle auto-advancing through clips
   useEffect(() => {
     if (!isPlaying || !isFullscreen || clips.length === 0) return;
     
@@ -53,12 +51,10 @@ const VideoPreview = ({
       setCurrentTime(prevTime => {
         const newTime = prevTime + 0.1;
         
-        // If we've reached the end of the current clip, advance to the next one
         if (isFullscreen && newTime >= clipStartTime + currentClipDuration) {
           if (currentClipIndex < clips.length - 1) {
             setCurrentClipIndex(prevIndex => prevIndex + 1);
           } else {
-            // End of all clips
             setIsPlaying(false);
             return clipStartTime + currentClipDuration;
           }
@@ -71,7 +67,6 @@ const VideoPreview = ({
     return () => clearInterval(timer);
   }, [isPlaying, isFullscreen, clips, currentClipIndex]);
 
-  // Reset time when toggling between single clip and full video
   useEffect(() => {
     setCurrentTime(0);
     setCurrentClipIndex(0);
@@ -82,25 +77,22 @@ const VideoPreview = ({
   const displayDuration = activeClipId ? activeClipDuration : totalDuration;
   const progressPercentage = (currentTime / (activeClipId ? activeClipDuration : totalDuration)) * 100;
 
-  // Get current clip for full video mode
   const currentDisplayClip = isFullscreen ? clips[currentClipIndex] : activeClip;
-  
-  // Container classes based on mode
+
   const containerClasses = isFullscreen 
     ? "border-none bg-theme-black rounded-lg overflow-hidden h-full flex flex-col"
     : "border-theme-gray/40 bg-theme-black/50 rounded-lg overflow-hidden h-full flex flex-col";
 
   return (
     <Card className={containerClasses}>
-      {/* Video Preview Area */}
       <div
         className="relative flex-1 flex justify-center items-center p-4"
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => isPlaying && setShowControls(false)}
       >
-        {/* 9:16 Vertical Video Container */}
-        <div className={`relative aspect-[9/16] bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] ${isFullscreen ? 'h-full max-h-full' : 'h-full max-h-[500px]'}`}>
-          {/* Empty Preview Content */}
+        <div className={`relative aspect-[9/16] bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] ${
+          isFullscreen ? 'h-[85vh] max-h-[85vh]' : 'h-full max-h-[500px]'
+        }`}>
           <div className="absolute inset-0 flex items-center justify-center">
             {clips.length === 0 ? (
               <div className="text-white/70">
@@ -116,11 +108,8 @@ const VideoPreview = ({
             )}
           </div>
         </div>
-
-        {/* Removed the clip info badge that was here */}
       </div>
 
-      {/* Video Controls */}
       <div className={`p-4 border-t border-theme-gray/20 flex flex-col gap-2 ${isPlaying && !showControls ? 'opacity-0 transition-opacity' : 'opacity-100'}`}>
         <div className="flex items-center gap-2">
           <div className="w-full h-1 bg-theme-gray/30 rounded-full overflow-hidden">

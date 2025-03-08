@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock, Eye, Save, X } from "lucide-react";
@@ -314,9 +315,9 @@ const CreateVideo = () => {
       </Dialog>
 
       <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
-        <DialogContent className="sm:max-w-4xl h-[80vh] bg-theme-black border-theme-gray/40 flex flex-col p-0">
+        <DialogContent className="sm:max-w-[90vh] h-[90vh] bg-theme-black border-theme-gray/40 flex flex-col p-0">
           <div className="flex-1 overflow-hidden">
-            <div className="h-full">
+            <div className="h-full flex items-center justify-center">
               <VideoPreview 
                 activeClipId={null}
                 clips={clips}
