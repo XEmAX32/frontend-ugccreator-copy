@@ -8,6 +8,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import AvatarSelection from "./pages/AvatarSelection";
+import CreateVideo from "./pages/CreateVideo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Navigate to="/home" replace />} />
           <Route path="/avatar-selection" element={<AvatarSelection />} />
+          <Route path="/create-video" element={<CreateVideo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
