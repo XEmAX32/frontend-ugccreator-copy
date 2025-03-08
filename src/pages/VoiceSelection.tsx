@@ -97,6 +97,7 @@ const AVAILABLE_VOICES = [{
 
 // Demo text for voice preview
 const DEMO_TEXT = "Hello, I'm your AI presenter. I'll help you create engaging videos that captivate your audience.";
+
 const VoiceSelection = () => {
   const [voices, setVoices] = useState(AVAILABLE_VOICES);
   const [selectedVoice, setSelectedVoice] = useState<string | null>("aria");
@@ -199,20 +200,18 @@ const VoiceSelection = () => {
     console.log(`Selected voice: ${selectedVoice}`);
     navigate("/create-video");
   };
+
   return <PageContainer>
       <div className="container px-4 py-6 relative bg-transparent min-h-screen">
-        <div className="fixed top-24 right-8 z-10">
-          <Button className="bg-theme-orange hover:bg-theme-orange-light text-white px-8" onClick={handleContinue}>
-            Continue
-          </Button>
-        </div>
-
         <div className="max-w-7xl mx-auto">
-          <div className="mb-10 text-center relative">
-            <Button variant="ghost" onClick={() => navigate("/avatar-selection")} className="absolute left-0 top-0 text-white">
+          <div className="mb-10 text-center relative flex items-center justify-between">
+            <Button variant="ghost" onClick={() => navigate("/avatar-selection")} className="text-white">
               <ArrowLeft size={20} />
             </Button>
             <h1 className="text-3xl font-bold text-white">Choose Your Voice</h1>
+            <Button className="bg-theme-orange hover:bg-theme-orange-light text-white px-8" onClick={handleContinue}>
+              Continue
+            </Button>
           </div>
 
           <div className="flex flex-col space-y-4 mb-6">
