@@ -126,18 +126,6 @@ const ScriptEditor = ({
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-white/80">Avatar Movements & Product Interaction</h3>
             <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={(e) => {
-                  e.preventDefault(); // Prevent form submission
-                  setShowMovementHints(true);
-                }}
-                className="h-7 px-2 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md"
-              >
-                <Lightbulb size={14} className="text-theme-orange mr-1" />
-                <span className="text-xs">Hints</span>
-              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
@@ -161,6 +149,18 @@ const ScriptEditor = ({
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent form submission
+                  setShowMovementHints(true);
+                }}
+                className="h-7 px-2 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md"
+              >
+                <Lightbulb size={14} className="text-theme-orange mr-1" />
+                <span className="text-xs">Hints</span>
+              </Button>
             </div>
           </div>
           <Textarea
