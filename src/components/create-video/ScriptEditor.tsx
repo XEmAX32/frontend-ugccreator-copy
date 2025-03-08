@@ -1,4 +1,3 @@
-
 import { FormEvent, useState } from "react";
 import { Film, Hand, Clock, Package, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -82,13 +81,11 @@ const ScriptEditor = ({
   const [showMovementHints, setShowMovementHints] = useState(false);
   const [showSpeechHints, setShowSpeechHints] = useState(false);
 
-  // Handle changes to both text areas
   const handleSpeechPromptChange = (text: string) => {
     setSpeechPrompt(text);
     onPromptChange(text);
   };
 
-  // When a product is selected, update the state and add it to the movements text
   const handleProductSelect = (product: string) => {
     if (product === "No Product") {
       setSelectedProduct(null);
@@ -96,9 +93,6 @@ const ScriptEditor = ({
     }
     
     setSelectedProduct(product);
-    setAvatarMovements((prev) => 
-      prev ? `${prev}\nInteract with ${product}` : `Interact with ${product}`
-    );
   };
 
   const handleMovementExampleClick = (example: string) => {
@@ -127,16 +121,10 @@ const ScriptEditor = ({
       )}
       
       <form onSubmit={onSubmit} className="flex flex-col h-full">
-        {/* Avatar Movements Box */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-white/80">Avatar Movements & Product Interaction</h3>
             <div className="flex items-center gap-2">
-              {selectedProduct && (
-                <div className="bg-theme-gray/20 text-white/90 text-xs px-3 py-1 rounded-md">
-                  Selected: {selectedProduct}
-                </div>
-              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
@@ -145,7 +133,7 @@ const ScriptEditor = ({
                     onClick={(e) => e.preventDefault()} // Prevent form submission
                   >
                     <Package size={16} />
-                    <span className="font-medium text-sm">Select Product</span>
+                    <span className="font-medium text-sm">{selectedProduct || "Select Product"}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-theme-black/90 border-theme-gray/30">
@@ -182,7 +170,6 @@ const ScriptEditor = ({
           />
         </div>
         
-        {/* Speech Prompt Box */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-white/80">Avatar Speech</h3>
@@ -228,7 +215,6 @@ const ScriptEditor = ({
         </div>
       </form>
 
-      {/* Movement Hints Dialog */}
       <Dialog open={showMovementHints} onOpenChange={setShowMovementHints}>
         <DialogContent className="bg-theme-black border-theme-gray/30 text-white max-w-md">
           <DialogHeader>
@@ -256,7 +242,6 @@ const ScriptEditor = ({
         </DialogContent>
       </Dialog>
 
-      {/* Speech Hints Dialog */}
       <Dialog open={showSpeechHints} onOpenChange={setShowSpeechHints}>
         <DialogContent className="bg-theme-black border-theme-gray/30 text-white max-w-md">
           <DialogHeader>
