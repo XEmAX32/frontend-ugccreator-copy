@@ -30,9 +30,9 @@ const Home = () => {
           <h1 className="text-2xl font-bold mb-6 text-white">Your Projects</h1>
           
           {/* Gallery with background and frame */}
-          <div className="relative rounded-xl bg-[#221F26] p-6 shadow-lg overflow-hidden">
+          <div className="relative rounded-xl bg-[#221F26]/10 backdrop-blur-sm p-6 shadow-lg overflow-hidden border border-[#403E43]/20">
             {/* Decorative top-left corner radius */}
-            <div className="absolute top-0 left-0 w-12 h-12 rounded-tl-xl bg-[#221F26] border-t border-l border-[#403E43]/40"></div>
+            <div className="absolute top-0 left-0 w-12 h-12 rounded-tl-xl bg-[#221F26]/10 border-t border-l border-[#403E43]/20"></div>
             
             {/* Gallery content */}
             {mockProjects.length > 0 ? (
@@ -42,7 +42,7 @@ const Home = () => {
             ) : (
               <div className="flex justify-start">
                 <Card 
-                  className="border border-[#8A898C] mt-4 bg-transparent cursor-pointer hover:bg-[#403E43]/20 transition-all w-64 max-w-xs rounded-xl overflow-hidden"
+                  className="border border-[#8A898C]/40 mt-4 bg-transparent cursor-pointer hover:bg-[#403E43]/20 transition-all w-64 max-w-xs rounded-xl overflow-hidden"
                   onClick={handleCardClick}
                 >
                   <CardContent className="p-6 flex flex-col items-center justify-center h-96">
