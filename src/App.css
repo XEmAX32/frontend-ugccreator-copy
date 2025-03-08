@@ -65,3 +65,9 @@
 .avatar-bg-gradient {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e1b4b 100%);
 }
+
+/* Custom transparent background */
+.bg-transparent {
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+}

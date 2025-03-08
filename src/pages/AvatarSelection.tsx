@@ -1,11 +1,13 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, Wand2 } from "lucide-react";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 // Avatar images with various styles
 const AVATAR_IMAGES = [
@@ -59,17 +61,24 @@ const AVATAR_IMAGES = [
   }
 ];
 
-// Filter categories
-const CATEGORIES = [
+// Sample AI generated avatars for the modal
+const AI_GENERATED_AVATARS = [
+  { id: "gen1", url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=800&fit=crop" },
+  { id: "gen2", url: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=800&fit=crop" },
+  { id: "gen3", url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=800&fit=crop" },
+];
+
+// Simplified categories
+const SIMPLIFIED_CATEGORIES = [
   { id: "all", label: "All" },
-  { id: "personal", label: "Personal" },
-  { id: "ugc", label: "Ugc" },
-  { id: "masterclass", label: "Masterclass" }
+  { id: "personal", label: "Personal" }
 ];
 
 const AvatarSelection = () => {
   const [selectedAvatar, setSelectedAvatar] = useState<number>(1); // Default to first avatar
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+  const [promptText, setPromptText] = useState("");
   const navigate = useNavigate();
 
   const handleAvatarSelect = (id: number) => {
@@ -80,13 +89,21 @@ const AvatarSelection = () => {
     navigate("/create-video");
   };
 
+  const handleGenerateAvatar = () => {
+    // This would be where you'd call an API to generate a new avatar
+    console.log("Generating avatar with prompt:", promptText);
+    // For now, just close the modal
+    setPromptText("");
+    setIsGenerateModalOpen(false);
+  };
+
   const filteredAvatars = activeCategory === "all" 
     ? AVATAR_IMAGES 
     : AVATAR_IMAGES.filter(avatar => avatar.category === activeCategory);
 
   return (
     <PageContainer>
-      <div className="container px-4 py-6 relative bg-gradient-to-br from-[#0f172a] to-[#1e1b4b] min-h-screen">
+      <div className="container px-4 py-6 relative bg-transparent min-h-screen">
         {/* Fixed Continue button at top right */}
         <div className="fixed top-24 right-8 z-10">
           <Button
@@ -109,9 +126,9 @@ const AvatarSelection = () => {
             <h1 className="text-3xl font-bold text-white">Choose Your Avatar</h1>
           </div>
 
-          {/* Category filters */}
+          {/* Simplified Category filters + Generate button */}
           <div className="flex justify-center space-x-2 mb-8">
-            {CATEGORIES.map((category) => (
+            {SIMPLIFIED_CATEGORIES.map((category) => (
               <Button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
@@ -125,6 +142,15 @@ const AvatarSelection = () => {
                 {category.label}
               </Button>
             ))}
+            
+            <Button
+              onClick={() => setIsGenerateModalOpen(true)}
+              variant="outline"
+              className="rounded-full px-6 bg-theme-orange/90 text-white border-white/20 hover:bg-theme-orange"
+            >
+              <Wand2 className="mr-2" size={16} />
+              Generate New Avatar
+            </Button>
           </div>
 
           {/* Avatar gallery with smooth scrolling - no scrollbar */}
@@ -176,6 +202,74 @@ const AvatarSelection = () => {
           </div>
         </div>
       </div>
+
+      {/* Generate New Avatar Modal */}
+      <Dialog open={isGenerateModalOpen} onOpenChange={setIsGenerateModalOpen}>
+        <DialogContent className="sm:max-w-[900px] bg-gradient-to-br from-gray-900/95 to-black/95 border-gray-800">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-center text-white">Generate New Avatar</DialogTitle>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            {/* Prompt Input */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-white">Enter Your Prompt</h3>
+              <Textarea 
+                value={promptText}
+                onChange={(e) => setPromptText(e.target.value)}
+                placeholder="Describe your avatar... (e.g., 'A professional woman with short dark hair and glasses in a business setting')"
+                className="h-32 bg-gray-800/50 border-gray-700 text-white"
+              />
+              <Button 
+                onClick={handleGenerateAvatar}
+                className="w-full bg-theme-orange hover:bg-theme-orange-light"
+                disabled={!promptText.trim()}
+              >
+                <Wand2 className="mr-2" size={16} />
+                Generate Avatar
+              </Button>
+            </div>
+            
+            {/* Image Gallery */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-white">Generated Avatars</h3>
+              <div className="grid grid-cols-1 gap-4 max-h-[400px] overflow-y-auto no-scrollbar">
+                {AI_GENERATED_AVATARS.map((avatar) => (
+                  <div key={avatar.id} className="relative">
+                    <img 
+                      src={avatar.url} 
+                      alt="Generated avatar" 
+                      className="w-full rounded-lg object-cover" 
+                      style={{ aspectRatio: '3/4' }}
+                    />
+                    <Button 
+                      className="absolute bottom-3 right-3 bg-theme-orange hover:bg-theme-orange-light"
+                      size="sm"
+                      onClick={() => {
+                        // Add this avatar to the main list
+                        console.log("Selected generated avatar:", avatar.id);
+                        setIsGenerateModalOpen(false);
+                      }}
+                    >
+                      Use Avatar
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter className="mt-6">
+            <Button
+              variant="outline"
+              onClick={() => setIsGenerateModalOpen(false)}
+              className="border-gray-700 text-gray-300"
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageContainer>
   );
 };
