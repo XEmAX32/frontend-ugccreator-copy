@@ -43,9 +43,7 @@ const StoryboardSection = ({
         <div className="absolute -bottom-6 left-0 text-xs text-gray-400">
           00:00
         </div>
-        <div className="absolute -bottom-6 right-0 text-xs text-gray-400">
-          {Math.floor(maxDuration / 60)}:{(maxDuration % 60).toString().padStart(2, '0')}
-        </div>
+        {/* Removed the right timestamp that was here */}
       </div>
       
       <div className="flex gap-3 overflow-x-auto py-2 storyboard no-scrollbar" style={{ minHeight: '60px' }}>
