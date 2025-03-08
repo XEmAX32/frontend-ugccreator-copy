@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, HelpCircle, Send, Video } from "lucide-react";
+import { ArrowLeft, Hand, HelpCircle, Send, Video } from "lucide-react";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -60,11 +60,11 @@ const CreateVideo = () => {
                   <TooltipTrigger asChild>
                     <Button 
                       variant="outline" 
-                      size="icon"
                       onClick={() => setShowExamples(!showExamples)}
-                      className="bg-theme-orange hover:bg-theme-orange-light text-white border-none rounded-full"
+                      className="px-3 py-1 bg-theme-orange hover:bg-theme-orange-light text-white border-none rounded-md shadow-md flex items-center gap-2 animate-pulse"
                     >
-                      <HelpCircle size={18} />
+                      <Hand size={16} className="animate-bounce" />
+                      <span className="font-medium text-sm">Click me</span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
