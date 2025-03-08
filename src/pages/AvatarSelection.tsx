@@ -88,7 +88,7 @@ const AvatarSelection = () => {
   };
 
   const handleContinue = () => {
-    navigate("/create-video");
+    navigate("/voice-selection");
   };
 
   const handleGenerateAvatar = () => {
