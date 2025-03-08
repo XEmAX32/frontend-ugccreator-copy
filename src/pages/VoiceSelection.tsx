@@ -264,9 +264,7 @@ const VoiceSelection = () => {
                         <span className="ml-1">{currentlyPlaying === voice.id ? "Stop" : "Preview"}</span>
                       </Button>
                       
-                      <Button variant="ghost" size="sm" className="text-white/80 hover:text-white" onClick={e => showVoiceDetails(voice, e)}>
-                        More Info
-                      </Button>
+                      
                     </div>
                     
                     {selectedVoice === voice.id && <div className="absolute top-3 right-3">
