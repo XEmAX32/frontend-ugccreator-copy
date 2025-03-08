@@ -1,3 +1,4 @@
+
 import { Plus, Clock, Video } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import PageContainer from "@/components/layout/PageContainer";
@@ -31,10 +32,10 @@ const Home = () => {
   return <PageContainer>
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
+          <div className="mb-8 flex justify-center">
             <Button asChild className="bg-theme-orange hover:bg-theme-orange-light flex items-center gap-2">
               <Link to="/avatar-selection">
-                <Plus size={18} /> New Project
+                <Plus size={18} /> New
               </Link>
             </Button>
           </div>
