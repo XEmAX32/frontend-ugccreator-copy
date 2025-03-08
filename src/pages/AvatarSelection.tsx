@@ -68,7 +68,17 @@ const AvatarSelection = () => {
 
   return (
     <PageContainer>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative">
+        {/* Fixed Continue button at top right */}
+        <div className="fixed top-24 right-8 z-10">
+          <Button
+            className="bg-theme-orange hover:bg-theme-orange-light text-white px-8"
+            onClick={handleContinue}
+          >
+            Continue
+          </Button>
+        </div>
+
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-6">
             <Button 
@@ -101,11 +111,11 @@ const AvatarSelection = () => {
             </Card>
           </div>
 
-          {/* Avatar gallery */}
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mt-6">
-            {AVATAR_IMAGES.map((avatar) => (
+          {/* Avatar gallery - changed to grid with more rows */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 max-h-[400px] overflow-y-auto no-scrollbar pb-8">
+            {AVATAR_IMAGES.concat(AVATAR_IMAGES).map((avatar, index) => (
               <Card 
-                key={avatar.id}
+                key={`${avatar.id}-${index}`}
                 className={`relative rounded-lg overflow-hidden cursor-pointer transition-all ${
                   selectedAvatar === avatar.id 
                     ? "ring-2 ring-theme-orange" 
@@ -133,15 +143,6 @@ const AvatarSelection = () => {
                 </button>
               </Card>
             ))}
-          </div>
-
-          <div className="mt-10 flex justify-center">
-            <Button
-              className="bg-theme-orange hover:bg-theme-orange-light text-white px-8"
-              onClick={handleContinue}
-            >
-              Continue
-            </Button>
           </div>
         </div>
       </div>
