@@ -1,6 +1,6 @@
 
 import { FormEvent, useState } from "react";
-import { Film, Hand, Clock, Package } from "lucide-react";
+import { Film, Hand, Clock, Package, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +9,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,6 +48,26 @@ const PRODUCT_OPTIONS = [
   "Tablet",
 ];
 
+const MOVEMENT_EXAMPLES = [
+  "Walk towards the camera while gesturing with hands",
+  "Stand confidently and point to the product",
+  "Pick up the product and examine it closely",
+  "Show excitement when revealing the product features",
+  "Demonstrate the product in use",
+  "Make a thumbs up gesture",
+  "Point to specific parts of the product while explaining",
+];
+
+const SPEECH_EXAMPLES = [
+  "Today I'm excited to show you our latest innovation...",
+  "Have you ever wondered how this technology works?",
+  "This product solves a problem that many people face daily...",
+  "Let me explain why this is a game-changer in the industry...",
+  "The three key benefits of this product are...",
+  "Our customers love this feature because...",
+  "Imagine how this would improve your daily routine...",
+];
+
 const ScriptEditor = ({
   activeClipId,
   promptText,
@@ -55,6 +83,8 @@ const ScriptEditor = ({
   const [avatarMovements, setAvatarMovements] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [speechPrompt, setSpeechPrompt] = useState(promptText || clipText || "");
+  const [showMovementHints, setShowMovementHints] = useState(false);
+  const [showSpeechHints, setShowSpeechHints] = useState(false);
 
   // Handle changes to both text areas
   const handleSpeechPromptChange = (text: string) => {
@@ -68,6 +98,16 @@ const ScriptEditor = ({
     setAvatarMovements((prev) => 
       prev ? `${prev}\nInteract with ${product}` : `Interact with ${product}`
     );
+  };
+
+  const handleMovementExampleClick = (example: string) => {
+    setAvatarMovements((prev) => prev ? `${prev}\n${example}` : example);
+    setShowMovementHints(false);
+  };
+
+  const handleSpeechExampleClick = (example: string) => {
+    handleSpeechPromptChange(example);
+    setShowSpeechHints(false);
   };
 
   return (
@@ -105,28 +145,39 @@ const ScriptEditor = ({
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-white/80">Avatar Movements & Product Interaction</h3>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="px-3 py-1 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md flex items-center gap-2"
-                >
-                  <Package size={16} />
-                  <span className="font-medium text-sm">{selectedProduct || "Select Product"}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-theme-black/90 border-theme-gray/30">
-                {PRODUCT_OPTIONS.map((product) => (
-                  <DropdownMenuItem 
-                    key={product} 
-                    onClick={() => handleProductSelect(product)}
-                    className="text-white hover:bg-theme-gray/30 cursor-pointer"
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setShowMovementHints(true)}
+                className="h-7 px-2 text-white hover:bg-theme-gray/30"
+              >
+                <Lightbulb size={14} className="text-theme-orange mr-1" />
+                <span className="text-xs">Hints</span>
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="px-3 py-1 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md flex items-center gap-2"
                   >
-                    {product}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    <Package size={16} />
+                    <span className="font-medium text-sm">{selectedProduct || "Select Product"}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-theme-black/90 border-theme-gray/30">
+                  {PRODUCT_OPTIONS.map((product) => (
+                    <DropdownMenuItem 
+                      key={product} 
+                      onClick={() => handleProductSelect(product)}
+                      className="text-white hover:bg-theme-gray/30 cursor-pointer"
+                    >
+                      {product}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
           <Textarea
             placeholder="Describe how the avatar should move and interact with the product..."
@@ -138,7 +189,18 @@ const ScriptEditor = ({
         
         {/* Speech Prompt Box */}
         <div className="mb-4">
-          <h3 className="text-sm font-medium text-white/80 mb-2">Avatar Speech</h3>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-sm font-medium text-white/80">Avatar Speech</h3>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setShowSpeechHints(true)}
+              className="h-7 px-2 text-white hover:bg-theme-gray/30"
+            >
+              <Lightbulb size={14} className="text-theme-orange mr-1" />
+              <span className="text-xs">Hints</span>
+            </Button>
+          </div>
           <Textarea
             placeholder={activeClipId 
               ? "Edit what the avatar should say in this clip..." 
@@ -167,6 +229,62 @@ const ScriptEditor = ({
           </div>
         </div>
       </form>
+
+      {/* Movement Hints Dialog */}
+      <Dialog open={showMovementHints} onOpenChange={setShowMovementHints}>
+        <DialogContent className="bg-theme-black border-theme-gray/30 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-theme-orange">Avatar Movement Hints</DialogTitle>
+            <DialogDescription className="text-white/70">
+              Choose an example or get inspired for your avatar's movements and interactions.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2 space-y-2">
+            {MOVEMENT_EXAMPLES.map((example, index) => (
+              <button
+                key={index}
+                className="w-full text-left p-2 hover:bg-theme-gray/20 rounded-md text-sm"
+                onClick={() => handleMovementExampleClick(example)}
+              >
+                {example}
+              </button>
+            ))}
+          </div>
+          <DialogClose asChild>
+            <Button variant="outline" className="mt-2 border-theme-gray/30 text-white">
+              Close
+            </Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
+
+      {/* Speech Hints Dialog */}
+      <Dialog open={showSpeechHints} onOpenChange={setShowSpeechHints}>
+        <DialogContent className="bg-theme-black border-theme-gray/30 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-theme-orange">Speech Prompt Hints</DialogTitle>
+            <DialogDescription className="text-white/70">
+              Choose an example or get inspired for what your avatar can say.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2 space-y-2">
+            {SPEECH_EXAMPLES.map((example, index) => (
+              <button
+                key={index}
+                className="w-full text-left p-2 hover:bg-theme-gray/20 rounded-md text-sm"
+                onClick={() => handleSpeechExampleClick(example)}
+              >
+                {example}
+              </button>
+            ))}
+          </div>
+          <DialogClose asChild>
+            <Button variant="outline" className="mt-2 border-theme-gray/30 text-white">
+              Close
+            </Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
