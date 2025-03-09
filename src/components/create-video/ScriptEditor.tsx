@@ -178,14 +178,25 @@ const ScriptEditor = ({
           setGenerationMessage(data.message);
         }
         
+        if (data.result) {
+          console.log(data.result)
+          setIsGeneratingVideo(false);
+          setVideoGenerated(true);
+          setGenerationMessage("Video generation complete!");
+          setVideoLink(data.result);
+          onGenerationEnded(data.result);
+        }
+
         if (data.progress === 100 || data.status === 'completed') {
           setIsGeneratingVideo(false);
           setVideoGenerated(true);
           setGenerationMessage("Video generation complete!");
-          
-          if (data.video_link) {
-            setVideoLink(data.video_link);
-            onGenerationEnded(data.video_link);
+
+          console.log(data["result"])
+
+          if (data.result) {
+            setVideoLink(data.result);
+            onGenerationEnded(data.result);
           }
           
           socket.close();
