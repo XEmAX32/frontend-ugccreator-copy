@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import GenerationProgress from "@/components/avatar/GenerationProgress";
+import axios from "axios";
 
 const AVATAR_IMAGES = [];
 const SIMPLIFIED_CATEGORIES = [{
@@ -134,6 +135,15 @@ const AvatarSelection = () => {
     };
   }, [isGenerating, promptText]);
 
+
+  useEffect(() => {
+    axios.get("http://91.134.66.237:8181/image").then((res) => {
+      setAvatarImages(res.data.images)
+      console.log('res', res.data.images)
+    });
+  }, []);
+
+
   const handleAvatarSelect = (id: number) => {
     setSelectedAvatar(id);
   };
@@ -151,7 +161,13 @@ const AvatarSelection = () => {
       });
       return;
     }
-    
+
+    axios.post("http://91.134.66.237:8181/image", {
+      prompt: promptText
+    }, {
+      headers: {'Content-Type': "application/json",}
+    }).then((res) => console.log('yoooooo', res))
+
     setIsGenerating(true);
     setGeneratedAvatar(null);
     console.log("Generating avatar with prompt:", promptText);
@@ -225,7 +241,7 @@ const AvatarSelection = () => {
                 <button className="w-full relative" onClick={() => handleAvatarSelect(avatar.id)} style={{
               aspectRatio: '3/4'
             }}>
-                  <img src={avatar.url} alt={avatar.alt} className="w-full h-full object-cover rounded-lg" />
+                  <img src={avatar.link} alt={avatar.alt} className="w-full h-full object-cover rounded-lg" />
                   
                   
                   

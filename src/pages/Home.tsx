@@ -54,6 +54,16 @@ const Home = () => {
     setProjectName("");
     
     localStorage.setItem("newProjectName", projectName);
+
+    axios.post("http://91.134.66.237:8181/project", {
+      name: projectName,
+      negative_prompt: null,
+      driving_image: {
+        filename: null,
+        subfolder: null, 
+        folder_type: null
+      }
+    }).then((res) => console.log(res));
     
     navigate("/avatar-selection");
   };
