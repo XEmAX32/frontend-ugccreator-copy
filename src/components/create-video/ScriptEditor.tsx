@@ -83,6 +83,7 @@ const ScriptEditor = ({
   const [speechPrompt, setSpeechPrompt] = useState(promptText || clipText || "");
   const [showMovementHints, setShowMovementHints] = useState(false);
   const [showSpeechHints, setShowSpeechHints] = useState(false);
+  const [videoGenerated, setVideoGenerated] = useState(false);
 
   const handleSpeechPromptChange = (text: string) => {
     setSpeechPrompt(text);
@@ -133,6 +134,7 @@ const handleGenerateVideo = async () => {
     });
 
     console.log("Video generated successfully!", response.data);
+    setVideoGenerated(true);
   } catch (error) {
     console.error("Error generating video:", error);
   }
@@ -206,6 +208,7 @@ const handleGenerateVideo = async () => {
               type="button"
               onClick={handleGenerateVideo}  
               className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
+              disabled={!avatarMovements.trim()}
             >
               Generate Video <Video size={16} />
             </Button>
@@ -250,7 +253,7 @@ const handleGenerateVideo = async () => {
               type="submit"
               onClick={handleGenerateClip}  
               className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
-              disabled={!speechPrompt.trim() || remainingDuration <= 0}
+              disabled={!speechPrompt.trim() || remainingDuration <= 0 || !videoGenerated}
             >
               Generate Speech <Film size={16} />
             </Button>
