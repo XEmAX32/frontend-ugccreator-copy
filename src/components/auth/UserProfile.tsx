@@ -1,27 +1,27 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { useClerk } from "@clerk/clerk-react";
 
 const UserProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const clerk = useClerk();
 
-  const handleSignOut = () => {
-    // Here you would connect to Clerk's sign out API
-    console.log("Signing out user...");
-    
-    // Simulate sign out (replace with actual Clerk sign out)
-    setTimeout(() => {
+  const handleSignOut = async () => {
+    try {
+      await clerk.signOut();
       toast({
         title: "Signed out",
         description: "You have been successfully signed out",
       });
       navigate("/signin");
-    }, 500);
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
   };
 
   return (
