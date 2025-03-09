@@ -1,13 +1,16 @@
-import { useState } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, Wand2, RefreshCw, Loader2 } from "lucide-react";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import GenerationProgress from "@/components/avatar/GenerationProgress";
+import axios from "axios";
+
 const AVATAR_IMAGES = [];
 const SIMPLIFIED_CATEGORIES = [{
   id: "all",
@@ -17,6 +20,7 @@ const SIMPLIFIED_CATEGORIES = [{
   label: "Personal"
 }];
 const INITIAL_GENERATED_AVATAR = null;
+
 const AvatarSelection = () => {
   const [avatarImages, setAvatarImages] = useState(AVATAR_IMAGES);
   const [selectedAvatar, setSelectedAvatar] = useState<number>(1);
@@ -25,13 +29,129 @@ const AvatarSelection = () => {
   const [promptText, setPromptText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedAvatar, setGeneratedAvatar] = useState(INITIAL_GENERATED_AVATAR);
+  const [generationProgress, setGenerationProgress] = useState<{value: number, max: number} | null>(null);
   const navigate = useNavigate();
+  const socketRef = useRef<WebSocket | null>(null);
+  
+  // WebSocket connection setup and cleanup
+  useEffect(() => {
+    if (isGenerating) {
+      // Connect to WebSocket server when generation starts
+      const socket = new WebSocket('ws://your-server-url/avatar-generation');
+      socketRef.current = socket;
+      
+      // Handle WebSocket events
+      socket.onopen = () => {
+        console.log('WebSocket connected');
+        socket.send(JSON.stringify({ prompt: promptText }));
+      };
+      
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.value !== undefined && data.max !== undefined) {
+            setGenerationProgress({
+              value: data.value,
+              max: data.max
+            });
+            
+            // If progress is complete, handle completion
+            if (data.value >= data.max) {
+              setTimeout(() => {
+                setIsGenerating(false);
+                setGenerationProgress(null);
+                setGeneratedAvatar({
+                  id: "gen1",
+                  url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=800&fit=crop"
+                });
+                toast({
+                  title: "Avatar generated!",
+                  description: "Your avatar has been created successfully."
+                });
+              }, 500); // Small delay for a smooth transition
+            }
+          }
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error);
+        }
+      };
+      
+      socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        toast({
+          title: "Connection error",
+          description: "Failed to connect to generation server. Please try again.",
+          variant: "destructive"
+        });
+        setIsGenerating(false);
+      };
+      
+      socket.onclose = () => {
+        console.log('WebSocket disconnected');
+      };
+      
+      // For development/demo purposes - simulate progress updates
+      if (process.env.NODE_ENV === 'development') {
+        const simulateProgress = () => {
+          let step = 0;
+          const maxSteps = 10;
+          const interval = setInterval(() => {
+            step++;
+            setGenerationProgress({
+              value: step,
+              max: maxSteps
+            });
+            
+            if (step >= maxSteps) {
+              clearInterval(interval);
+              setTimeout(() => {
+                setIsGenerating(false);
+                setGenerationProgress(null);
+                setGeneratedAvatar({
+                  id: "gen1",
+                  url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=800&fit=crop"
+                });
+                toast({
+                  title: "Avatar generated!",
+                  description: "Your avatar has been created successfully."
+                });
+              }, 500);
+            }
+          }, 800);
+          
+          return interval;
+        };
+        
+        const interval = simulateProgress();
+        return () => clearInterval(interval);
+      }
+    }
+    
+    // Cleanup WebSocket connection
+    return () => {
+      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+        socketRef.current.close();
+      }
+    };
+  }, [isGenerating, promptText]);
+
+
+  useEffect(() => {
+    axios.get("http://91.134.66.237:8181/image").then((res) => {
+      setAvatarImages(res.data.images)
+      console.log('res', res.data.images)
+    });
+  }, []);
+
+
   const handleAvatarSelect = (id: number) => {
     setSelectedAvatar(id);
   };
+  
   const handleContinue = () => {
     navigate("/voice-selection");
   };
+  
   const handleGenerateAvatar = () => {
     if (!promptText.trim()) {
       toast({
@@ -41,23 +161,23 @@ const AvatarSelection = () => {
       });
       return;
     }
+
+    axios.post("http://91.134.66.237:8181/image", {
+      prompt: promptText
+    }, {
+      headers: {'Content-Type': "application/json",}
+    }).then((res) => console.log('yoooooo', res))
+
     setIsGenerating(true);
     setGeneratedAvatar(null);
     console.log("Generating avatar with prompt:", promptText);
-    setTimeout(() => {
-      setIsGenerating(false);
-      setGeneratedAvatar({
-        id: "gen1",
-        url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=800&fit=crop"
-      });
-      toast({
-        title: "Avatar generated!",
-        description: "Your avatar has been created successfully."
-      });
-    }, 3000);
+    
+    // WebSocket connection is handled in the useEffect
   };
+  
   const handleAcceptAvatar = (avatarId: string) => {
     if (!generatedAvatar) return;
+    
     const newAvatar = {
       id: avatarImages.length + 1,
       url: generatedAvatar.url,
@@ -66,6 +186,7 @@ const AvatarSelection = () => {
       year: new Date().getFullYear().toString(),
       category: "personal"
     };
+    
     setAvatarImages([...avatarImages, newAvatar]);
     setSelectedAvatar(newAvatar.id);
     setIsGenerateModalOpen(false);
@@ -74,23 +195,20 @@ const AvatarSelection = () => {
       description: "The generated avatar has been added to your Personal collection."
     });
   };
+  
   const handleRegenerateAvatar = () => {
     if (!promptText.trim()) return;
+    
     setIsGenerating(true);
+    setGeneratedAvatar(null);
+    setGenerationProgress(null);
     console.log("Regenerating avatar with prompt:", promptText);
-    setTimeout(() => {
-      setIsGenerating(false);
-      setGeneratedAvatar({
-        id: "gen" + Math.random().toString(36).substring(7),
-        url: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=800&fit=crop"
-      });
-      toast({
-        title: "Avatar regenerated!",
-        description: "Your new avatar is ready for review."
-      });
-    }, 3000);
+    
+    // WebSocket connection is handled in the useEffect
   };
+  
   const filteredAvatars = activeCategory === "all" ? avatarImages : avatarImages.filter(avatar => avatar.category === activeCategory);
+  
   return <PageContainer>
       <div className="container px-4 py-6 relative bg-transparent min-h-screen">
         <div className="fixed top-24 right-8 z-10">
@@ -123,7 +241,7 @@ const AvatarSelection = () => {
                 <button className="w-full relative" onClick={() => handleAvatarSelect(avatar.id)} style={{
               aspectRatio: '3/4'
             }}>
-                  <img src={avatar.url} alt={avatar.alt} className="w-full h-full object-cover rounded-lg" />
+                  <img src={avatar.link} alt={avatar.alt} className="w-full h-full object-cover rounded-lg" />
                   
                   
                   
@@ -147,30 +265,51 @@ const AvatarSelection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-white">Enter Your Prompt</h3>
-              <Textarea value={promptText} onChange={e => setPromptText(e.target.value)} placeholder="Describe your avatar... (e.g., 'A professional woman with short dark hair and glasses in a business setting')" className="h-32 bg-gray-800/50 border-gray-700 text-white" disabled={isGenerating} />
-              <Button onClick={isGenerating ? undefined : handleGenerateAvatar} className="w-full bg-theme-orange hover:bg-theme-orange-light" disabled={!promptText.trim() || isGenerating}>
-                {isGenerating ? <>
+              <Textarea 
+                value={promptText} 
+                onChange={e => setPromptText(e.target.value)} 
+                placeholder="Describe your avatar... (e.g., 'A professional woman with short dark hair and glasses in a business setting')" 
+                className="h-32 bg-gray-800/50 border-gray-700 text-white" 
+                disabled={isGenerating} 
+              />
+              <Button 
+                onClick={isGenerating ? undefined : handleGenerateAvatar} 
+                className="w-full bg-theme-orange hover:bg-theme-orange-light" 
+                disabled={!promptText.trim() || isGenerating}
+              >
+                {isGenerating ? (
+                  <>
                     <Loader2 className="mr-2 animate-spin" size={16} />
                     Generating...
-                  </> : <>
+                  </>
+                ) : (
+                  <>
                     <Wand2 className="mr-2" size={16} />
                     Generate Avatar
-                  </>}
+                  </>
+                )}
               </Button>
+              
+              {isGenerating && <GenerationProgress isGenerating={isGenerating} progress={generationProgress} />}
             </div>
             
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-white">Generated Avatar</h3>
               
-              {isGenerating ? <div className="flex flex-col items-center justify-center h-[400px] bg-gray-800/30 rounded-lg">
+              {isGenerating ? (
+                <div className="flex flex-col items-center justify-center h-[400px] bg-gray-800/30 rounded-lg">
                   <Loader2 className="animate-spin text-theme-orange h-12 w-12 mb-4" />
                   <p className="text-white">Creating your avatar...</p>
-                </div> : !generatedAvatar ? <div className="flex flex-col items-center justify-center h-[400px] bg-gray-800/30 rounded-lg">
+                </div>
+              ) : !generatedAvatar ? (
+                <div className="flex flex-col items-center justify-center h-[400px] bg-gray-800/30 rounded-lg">
                   <p className="text-white text-center">
                     Your generated avatar will appear here.<br />
                     Enter a prompt and click "Generate Avatar".
                   </p>
-                </div> : <div className="relative h-[400px]">
+                </div>
+              ) : (
+                <div className="relative h-[400px]">
                   <img src={generatedAvatar.url} alt="Generated avatar" className="w-full rounded-lg object-cover h-full" />
                   <div className="absolute bottom-3 right-3 flex space-x-2">
                     <Button className="bg-gray-800/80 hover:bg-gray-700 text-white" size="sm" onClick={handleRegenerateAvatar}>
@@ -180,7 +319,8 @@ const AvatarSelection = () => {
                       Use Avatar
                     </Button>
                   </div>
-                </div>}
+                </div>
+              )}
             </div>
           </div>
           
@@ -193,4 +333,5 @@ const AvatarSelection = () => {
       </Dialog>
     </PageContainer>;
 };
+
 export default AvatarSelection;

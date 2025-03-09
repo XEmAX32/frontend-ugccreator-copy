@@ -1,40 +1,71 @@
-
-import { Plus, Video, Calendar, Download } from "lucide-react";
+import { Plus, Video, Calendar, Download, FileText } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { VideoProject } from "@/types/video";
-import { Dialog, DialogContent, DialogClose, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogClose, DialogFooter, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 import VideoPreview from "@/components/create-video/VideoPreview";
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const Home = () => {
   const [projects, setProjects] = useState<VideoProject[]>([]);
   const [selectedProject, setSelectedProject] = useState<VideoProject | null>(null);
   const [showVideoDialog, setShowVideoDialog] = useState(false);
+  const [showProjectNameDialog, setShowProjectNameDialog] = useState(false);
+  const [projectName, setProjectName] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
   
   useEffect(() => {
-    // Load projects from localStorage
     axios.get("http://91.134.66.237:8181/project").then((res) => {
       console.log(res)
       setProjects(res.data.projects)
-    })
+    }).catch(err => {
+      console.error("Failed to load projects:", err);
+    });
   }, []);
 
   const handleCardClick = (project?: VideoProject) => {
     if (project) {
-      // Show the project in a dialog
       setSelectedProject(project);
       setShowVideoDialog(true);
       console.log("Viewing project:", project);
     } else {
-      navigate("/avatar-selection");
+      setShowProjectNameDialog(true);
     }
+  };
+  
+  const handleCreateProject = () => {
+    if (!projectName.trim()) {
+      toast({
+        title: "Project name required",
+        description: "Please enter a name for your project.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setShowProjectNameDialog(false);
+    setProjectName("");
+    
+    localStorage.setItem("newProjectName", projectName);
+
+    axios.post("http://91.134.66.237:8181/project", {
+      name: projectName,
+      negative_prompt: null,
+      driving_image: {
+        filename: null,
+        subfolder: null, 
+        folder_type: null
+      }
+    }).then((res) => console.log(res));
+    
+    navigate("/avatar-selection");
   };
   
   const formatDate = (dateString: string) => {
@@ -43,13 +74,11 @@ const Home = () => {
   };
   
   const handleDownloadVideo = () => {
-    // In a real app, this would trigger the video rendering and download
     toast({
       title: "Download started",
       description: "Your video is being prepared for download."
     });
     
-    // Simulate download delay
     setTimeout(() => {
       toast({
         title: "Download ready",
@@ -64,25 +93,19 @@ const Home = () => {
         <div className="max-w-6xl mx-auto">
           <div className="mb-8 flex justify-center">
             <Button 
-              asChild 
               className="bg-theme-orange hover:bg-theme-orange-light flex items-center gap-3 text-lg px-6 py-6 rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-200"
               size="lg"
+              onClick={() => setShowProjectNameDialog(true)}
             >
-              <Link to="/avatar-selection">
-                <Plus size={22} /> New Project
-              </Link>
+              <Plus size={22} /> New Project
             </Button>
           </div>
           
-          {/* Page Title */}
           <h1 className="text-2xl font-bold mb-6 text-white">Your Projects</h1>
           
-          {/* Gallery with background and frame */}
           <div className="relative rounded-xl bg-[#221F26]/10 backdrop-blur-sm p-6 shadow-lg overflow-hidden border border-[#403E43]/20">
-            {/* Decorative top-left corner radius */}
             <div className="absolute top-0 left-0 w-12 h-12 rounded-tl-xl bg-[#221F26]/10 border-t border-l border-[#403E43]/20"></div>
             
-            {/* Gallery content */}
             {projects.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
                 {projects.map((project, index) => (
@@ -92,12 +115,10 @@ const Home = () => {
                     onClick={() => handleCardClick(project)}
                   >
                     <div className="aspect-[9/16] relative bg-[#1a1a1a] overflow-hidden">
-                      {/* Thumbnail or placeholder */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span>{project.name}</span>
+                        <span>{project.title}</span>
                       </div>
                       
-                      {/* Project info overlay - simplified to only show title and date */}
                       <div className="absolute bottom-0 left-0 right-0 bg-black/90 p-3">
                         <h3 className="text-white font-medium truncate">{project.title}</h3>
                         <div className="flex items-center mt-1">
@@ -111,7 +132,6 @@ const Home = () => {
                   </Card>
                 ))}
                 
-                {/* Add new project card */}
                 <Card 
                   className="border border-[#8A898C]/40 bg-transparent cursor-pointer hover:bg-[#403E43]/20 transition-all rounded-xl overflow-hidden"
                   onClick={() => handleCardClick()}
@@ -152,7 +172,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Project Preview Dialog */}
       <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
         <DialogContent className="sm:max-w-[90vh] h-[90vh] bg-theme-black border-theme-gray/40 flex flex-col p-0">
           <div className="flex-1 overflow-hidden">
@@ -184,6 +203,52 @@ const Home = () => {
             >
               <Download size={16} />
               Download Video
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showProjectNameDialog} onOpenChange={setShowProjectNameDialog}>
+        <DialogContent className="bg-theme-black border-theme-gray/40">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Create New Project</DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <Label htmlFor="project-name" className="text-sm text-muted-foreground mb-2 block">
+              Enter a name for your project
+            </Label>
+            <div className="flex items-center gap-2">
+              <FileText className="text-muted-foreground" size={20} />
+              <Input 
+                id="project-name"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="My awesome video"
+                className="border-theme-gray/40 bg-theme-black focus-visible:ring-theme-orange"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCreateProject();
+                  }
+                }}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowProjectNameDialog(false)}
+              className="bg-transparent border-theme-gray/40 text-white hover:bg-theme-black/60"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateProject}
+              className="bg-theme-orange hover:bg-theme-orange-light"
+            >
+              Create Project
             </Button>
           </DialogFooter>
         </DialogContent>
