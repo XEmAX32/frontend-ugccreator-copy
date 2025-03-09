@@ -8,59 +8,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-const AVATAR_IMAGES = [{
-  id: 1,
-  url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=800&fit=crop",
-  alt: "2015 Style",
-  name: "YOU",
-  year: "2015",
-  category: "personal"
-}, {
-  id: 2,
-  url: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=800&fit=crop",
-  alt: "2016 Style",
-  name: "LAO",
-  year: "2016",
-  category: "personal"
-}, {
-  id: 3,
-  url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=800&fit=crop",
-  alt: "2017 Style",
-  name: "INÈS",
-  year: "2017",
-  category: "ugc"
-}, {
-  id: 4,
-  url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=800&fit=crop",
-  alt: "2018 Style",
-  name: "ANNIE",
-  year: "2018",
-  category: "masterclass"
-}, {
-  id: 5,
-  url: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=600&h=800&fit=crop",
-  alt: "2019 Style",
-  name: "INÈS OUTDOORS",
-  year: "2019",
-  category: "ugc"
-}, {
-  id: 6,
-  url: "public/lovable-uploads/0c18313a-7482-447a-89ba-81104e9faca3.png",
-  alt: "2020 Style",
-  name: "MIA",
-  year: "2020",
-  category: "personal"
-}];
-const AI_GENERATED_AVATARS = [{
-  id: "gen1",
-  url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=800&fit=crop"
-}, {
-  id: "gen2",
-  url: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=800&fit=crop"
-}, {
-  id: "gen3",
-  url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=800&fit=crop"
-}];
+const AVATAR_IMAGES = [];
 const SIMPLIFIED_CATEGORIES = [{
   id: "all",
   label: "All"

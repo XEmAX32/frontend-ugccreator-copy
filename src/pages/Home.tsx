@@ -9,6 +9,7 @@ import { VideoProject } from "@/types/video";
 import { Dialog, DialogContent, DialogClose, DialogFooter } from "@/components/ui/dialog";
 import VideoPreview from "@/components/create-video/VideoPreview";
 import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
 
 const Home = () => {
   const [projects, setProjects] = useState<VideoProject[]>([]);
@@ -19,8 +20,10 @@ const Home = () => {
   
   useEffect(() => {
     // Load projects from localStorage
-    const savedProjects = JSON.parse(localStorage.getItem('videoProjects') || '[]');
-    setProjects(savedProjects);
+    axios.get("http://91.134.66.237:8181/project").then((res) => {
+      console.log(res)
+      setProjects(res.data.projects)
+    })
   }, []);
 
   const handleCardClick = (project?: VideoProject) => {
@@ -82,20 +85,16 @@ const Home = () => {
             {/* Gallery content */}
             {projects.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-                {projects.map(project => (
+                {projects.map((project, index) => (
                   <Card 
-                    key={project.id}
+                    key={index}
                     className="border border-[#8A898C]/40 bg-transparent cursor-pointer hover:bg-[#403E43]/20 transition-all rounded-xl overflow-hidden"
                     onClick={() => handleCardClick(project)}
                   >
                     <div className="aspect-[9/16] relative bg-[#1a1a1a] overflow-hidden">
                       {/* Thumbnail or placeholder */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <img 
-                          src={project.thumbnail} 
-                          alt={project.title}
-                          className="w-full h-full object-cover"
-                        />
+                        <span>{project.name}</span>
                       </div>
                       
                       {/* Project info overlay - simplified to only show title and date */}
