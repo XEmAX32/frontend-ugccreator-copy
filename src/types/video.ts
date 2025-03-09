@@ -4,7 +4,7 @@ export interface VideoClip {
   uuid: string;
   thumbnail: string;
   text: string;
-  link: string;
+  link?: string; // Make link property optional
   durationSeconds: number;
 }
 

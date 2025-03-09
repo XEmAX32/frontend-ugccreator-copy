@@ -44,7 +44,7 @@ const CreateVideo = () => {
       setClips((clips) => [...clips, {
           id: "0",
           uuid: res.data,
-          link: null,
+          link: "",
           thumbnail: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='12' fill='white' text-anchor='middle' dominant-baseline='middle'%3EClip 1%3C/text%3E%3C/svg%3E",
           text: "Have you ever wondered why the advice on scaling your startup sometimes backfires?",
           durationSeconds: 5,
@@ -79,9 +79,10 @@ const CreateVideo = () => {
     console.log("Submitting prompt:", promptText);
     const newClip: VideoClip = {
       id: String(Date.now()),
-      uuid: null,
+      uuid: "",
       thumbnail: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='12' fill='white' text-anchor='middle' dominant-baseline='middle'%3ENew Clip%3C/text%3E%3C/svg%3E",
       text: promptText,
+      link: "",
       durationSeconds: 5 // Default duration for new clips
     };
     
