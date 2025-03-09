@@ -1,8 +1,10 @@
 
 export interface VideoClip {
   id: string;
+  uuid: string;
   thumbnail: string;
   text: string;
+  link: string;
   durationSeconds: number;
 }
 

@@ -37,39 +37,41 @@ const AvatarSelection = () => {
   useEffect(() => {
     if (isGenerating) {
       // Connect to WebSocket server when generation starts
-      const socket = new WebSocket('ws://your-server-url/avatar-generation');
+      const socket = new WebSocket('ws://91.134.66.237:8181/gen_status');
       socketRef.current = socket;
       
       // Handle WebSocket events
       socket.onopen = () => {
         console.log('WebSocket connected');
-        socket.send(JSON.stringify({ prompt: promptText }));
       };
       
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+
+          console.log('sock', data)
+
           if (data.value !== undefined && data.max !== undefined) {
             setGenerationProgress({
               value: data.value,
               max: data.max
             });
             
-            // If progress is complete, handle completion
-            if (data.value >= data.max) {
-              setTimeout(() => {
-                setIsGenerating(false);
-                setGenerationProgress(null);
-                setGeneratedAvatar({
-                  id: "gen1",
-                  url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=800&fit=crop"
-                });
-                toast({
-                  title: "Avatar generated!",
-                  description: "Your avatar has been created successfully."
-                });
-              }, 500); // Small delay for a smooth transition
+            console.log('data', data.result)
+
+            if (data.flatten().result !== undefined) {
+              setIsGenerating(false);
+              setGenerationProgress(null);
+              setGeneratedAvatar({
+                id: "ciao",
+                url: data.flatten().result
+              });
+              toast({
+                title: "Avatar generated!",
+                description: "Your avatar has been created successfully."
+              });
             }
+            
           }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
@@ -90,41 +92,6 @@ const AvatarSelection = () => {
         console.log('WebSocket disconnected');
       };
       
-      // For development/demo purposes - simulate progress updates
-      if (process.env.NODE_ENV === 'development') {
-        const simulateProgress = () => {
-          let step = 0;
-          const maxSteps = 10;
-          const interval = setInterval(() => {
-            step++;
-            setGenerationProgress({
-              value: step,
-              max: maxSteps
-            });
-            
-            if (step >= maxSteps) {
-              clearInterval(interval);
-              setTimeout(() => {
-                setIsGenerating(false);
-                setGenerationProgress(null);
-                setGeneratedAvatar({
-                  id: "gen1",
-                  url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=800&fit=crop"
-                });
-                toast({
-                  title: "Avatar generated!",
-                  description: "Your avatar has been created successfully."
-                });
-              }, 500);
-            }
-          }, 800);
-          
-          return interval;
-        };
-        
-        const interval = simulateProgress();
-        return () => clearInterval(interval);
-      }
     }
     
     // Cleanup WebSocket connection
@@ -148,7 +115,13 @@ const AvatarSelection = () => {
     setSelectedAvatar(id);
   };
   
-  const handleContinue = () => {
+  const handleContinue = async () => {
+    const projectId = await localStorage.getItem("projectId")
+    axios.post("http://91.134.66.237:8181/project/" + projectId + "/avatar", {
+      avatar_id: selectedAvatar
+    }, {
+      headers: {'Content-Type': "application/json",}
+    }).then((res) => console.log("selected av", res))
     navigate("/voice-selection");
   };
   

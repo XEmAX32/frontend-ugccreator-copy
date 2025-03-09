@@ -118,6 +118,15 @@ const VoiceSelection = () => {
       return;
     }
 
+    console.log('selectedvoice', selectedVoice)
+
+    const projectId = localStorage.getItem("projectId");
+    axios.post("http://91.134.66.237:8181/project/" + projectId + "/voice", {
+      "voice_id": selectedVoice,
+    }, {
+      headers: {'Content-Type': "application/json",}
+    }).then((res) => console.log('funzionato?', res))
+
     // In a real implementation, you would store the selected voice in state/context
     // before navigating to the next page
     console.log(`Selected voice: ${selectedVoice}`);

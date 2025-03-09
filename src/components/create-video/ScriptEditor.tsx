@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import GenerationProgress from "@/components/avatar/GenerationProgress";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,7 @@ interface ScriptEditorProps {
   onToggleExamples: () => void;
   onSubmit: (e: FormEvent) => void;
   clipText?: string;
+  onGenerationEnded: () => void;
 }
 
 const PRODUCT_OPTIONS = [
@@ -74,6 +76,7 @@ const ScriptEditor = ({
   onPromptChange,
   onExampleClick,
   onToggleExamples,
+  onGenerationEnded,
   onSubmit,
   clipText,
 }: ScriptEditorProps) => {
@@ -83,7 +86,7 @@ const ScriptEditor = ({
   const [showMovementHints, setShowMovementHints] = useState(false);
   const [showSpeechHints, setShowSpeechHints] = useState(false);
   const [videoGenerated, setVideoGenerated] = useState(false);
-  const [videoGenerationProgress, setVideoGenerationProgress] = useState(0);
+  const [generationProgress, setGenerationProgress] = useState<{value: number, max: number} | null>({value: 0, max: 0});
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [generationMessage, setGenerationMessage] = useState("");
 
@@ -130,17 +133,17 @@ const ScriptEditor = ({
     }
 
     setIsGeneratingVideo(true);
-    setVideoGenerationProgress(0);
     setGenerationMessage("Starting video generation...");
 
     try {
       connectToWebsocket(activeClipId);
-      
-      const response = await axios.post(`/clip/${activeClipId}/generate-video`, {
-        avatarMovements,
-      });
+      const currentClipId = localStorage.getItem("currentClipId");
+      const response = await axios.post(`http://91.134.66.237:8181/clip/${currentClipId}/generate`, {
+        prompt: avatarMovements,
+      }, {
+        headers: {'Content-Type': "application/json",}
+      }).then((res) => console.log('res on video shit', res));
 
-      console.log("Video generation started successfully!", response.data);
     } catch (error) {
       console.error("Error generating video:", error);
       setIsGeneratingVideo(false);
@@ -149,8 +152,7 @@ const ScriptEditor = ({
   };
 
   const connectToWebsocket = (clipId: string) => {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/clip/${clipId}/progress`;
+    const wsUrl = `ws://91.134.66.237:8181/gen_status`;
     
     const socket = new WebSocket(wsUrl);
     
@@ -164,8 +166,11 @@ const ScriptEditor = ({
         const data = JSON.parse(event.data);
         console.log('WebSocket message received:', data);
         
-        if (data.progress !== undefined) {
-          setVideoGenerationProgress(data.progress);
+        if (data.value !== undefined && data.max !== undefined) {
+          setGenerationProgress({
+            value: data.value,
+            max: data.max
+          });
         }
         
         if (data.message) {
@@ -191,9 +196,7 @@ const ScriptEditor = ({
     
     socket.onclose = () => {
       console.log('WebSocket connection closed');
-      if (videoGenerationProgress < 100) {
-        setIsGeneratingVideo(false);
-      }
+
     };
     
     return () => {
@@ -223,7 +226,7 @@ const ScriptEditor = ({
         />
       )}
       
-      <form onSubmit={onSubmit} className="flex flex-col h-full">
+      <form onSubmit={} className="flex flex-col h-full">
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-white/80">Avatar Movements & Product Interaction</h3>
@@ -276,9 +279,9 @@ const ScriptEditor = ({
               <div className="w-full space-y-2 mb-2">
                 <div className="flex justify-between items-center">
                   <p className="text-xs text-white/70">{generationMessage}</p>
-                  <span className="text-xs text-theme-orange">{videoGenerationProgress}%</span>
+                  <span className="text-xs text-theme-orange">{generationProgress.value}/{generationProgress.max}</span>
                 </div>
-                <Progress value={videoGenerationProgress} className="h-1 w-full bg-theme-gray/30" />
+                <GenerationProgress isGenerating={isGeneratingVideo} progress={generationProgress} />
               </div>
             )}
             <div className="flex justify-end">

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock, Eye, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,15 +31,29 @@ const promptExamples = [
 const CreateVideo = () => {
   const [promptText, setPromptText] = useState("");
   const [showExamples, setShowExamples] = useState(false);
-  const [activeClipId, setActiveClipId] = useState<string | null>(null);
-  const [clips, setClips] = useState<VideoClip[]>([
-    {
-      id: "1",
-      thumbnail: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='12' fill='white' text-anchor='middle' dominant-baseline='middle'%3EClip 1%3C/text%3E%3C/svg%3E",
-      text: "Have you ever wondered why the advice on scaling your startup sometimes backfires?",
-      durationSeconds: 5
-    }
-  ]);
+  const [activeClipId, setActiveClipId] = useState<string | null>("0");
+  const [clips, setClips] = useState<VideoClip[]>([]);
+  
+  useEffect(() => {
+    const projectId = localStorage.getItem("projectId");
+    axios.post("http://91.134.66.237:8181/project/"+projectId+"/clip", {
+      index: 0
+    }, {
+      headers: {'Content-Type': "application/json",}
+    }).then((res) => {
+      localStorage.setItem("currentClipId", res.data);
+      setClips((clips) => [...clips, {
+          id: "0",
+          uuid: res.data,
+          link: null,
+          thumbnail: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='12' fill='white' text-anchor='middle' dominant-baseline='middle'%3EClip 1%3C/text%3E%3C/svg%3E",
+          text: "Have you ever wondered why the advice on scaling your startup sometimes backfires?",
+          durationSeconds: 5,
+        }
+      ])
+      console.log('clip created successfully', res)});
+  }, []);
+
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showVideoDialog, setShowVideoDialog] = useState(false);
   const [projectTitle, setProjectTitle] = useState("");
@@ -66,6 +80,7 @@ const CreateVideo = () => {
     console.log("Submitting prompt:", promptText);
     const newClip: VideoClip = {
       id: String(Date.now()),
+      uuid: null,
       thumbnail: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='12' fill='white' text-anchor='middle' dominant-baseline='middle'%3ENew Clip%3C/text%3E%3C/svg%3E",
       text: promptText,
       durationSeconds: 5 // Default duration for new clips
@@ -74,11 +89,31 @@ const CreateVideo = () => {
     setClips([...clips, newClip]);
     setActiveClipId(newClip.id);
     setPromptText("");
+
+    const projectId = localStorage.getItem("projectId");
+    axios.post("http://91.134.66.237:8181/project/" + projectId + "/clip", {
+      id: "0",
+      prompt: promptText
+    }).then((res) => console.log('res clip creation', res));
+
+
     toast({
       title: "Clip generated",
       description: "New clip has been added to your storyboard."
     });
   };
+
+  const onGenerationEnded = (video_link: string) => {
+    const currentClipId = localStorage.getItem("currentClipId");
+    clips.map((clip) => {
+      if (clip.uuid == currentClipId) {
+        let newClip = clip;
+        newClip.link = video_link;
+        return newClip
+      }
+      return clip;
+    })
+  }
 
   const insertExample = (example: string) => {
     setPromptText(example);
@@ -248,6 +283,7 @@ const CreateVideo = () => {
               onToggleExamples={() => setShowExamples(!showExamples)}
               onSubmit={handleSubmit}
               clipText={activeClipText}
+              onGenerationEnded={onGenerationEnded}
             />
           </div>
 

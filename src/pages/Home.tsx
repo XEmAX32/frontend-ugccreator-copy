@@ -63,7 +63,10 @@ const Home = () => {
         subfolder: null, 
         folder_type: null
       }
-    }).then((res) => console.log(res));
+    }).then((res) => {
+      localStorage.setItem("projectId", res.data[0])
+      console.log('newproj',res)
+    });
     
     navigate("/avatar-selection");
   };
@@ -124,7 +127,7 @@ const Home = () => {
                         <div className="flex items-center mt-1">
                           <div className="flex items-center text-xs text-gray-300">
                             <Calendar size={12} className="mr-1" />
-                            {formatDate(project.createdAt)}
+                            {formatDate(project["created_at"])}
                           </div>
                         </div>
                       </div>
