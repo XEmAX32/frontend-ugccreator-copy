@@ -205,9 +205,9 @@ const handleGenerateVideo = async () => {
             <Button 
               type="button"
               onClick={handleGenerateVideo}  
-              className="bg-theme-gray/30 hover:bg-theme-gray/50 text-white flex items-center gap-2 px-4 py-1 font-medium"
+              className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
             >
-              Generate Video <Video size={14} />
+              Generate Video <Video size={16} />
             </Button>
           </div>
         </div>
