@@ -18,6 +18,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import PromptExamplesPanel from "./PromptExamplesPanel";
+import axios from "axios";
+
 
 interface ScriptEditorProps {
   activeClipId: string | null;
@@ -99,6 +101,24 @@ const ScriptEditor = ({
     handleSpeechPromptChange(example);
     setShowSpeechHints(false);
   };
+
+
+const handleGenerateClip = async () => {
+  if (!activeClipId) {
+    console.error("No active clip ID");
+    return;
+  }
+
+  try {
+    const response = await axios.post(`/clip/${activeClipId}/generate`, {
+      avatarMovements,
+    });
+
+    console.log("Clip generated successfully!", response.data);
+  } catch (error) {
+    console.error("Error generating clip:", error);
+  }
+};
 
   return (
     <Card className="border-theme-gray/40 bg-theme-black/80 p-6 rounded-lg">
@@ -201,7 +221,8 @@ const ScriptEditor = ({
           <div className="ml-auto">
             <Button 
               type="submit"
-              className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
+              onClick={handleGenerateClip}  
+             className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
               disabled={!speechPrompt.trim() || remainingDuration <= 0}
             >
               {activeClipId ? "Update Clip" : "Generate Clip"} <Film size={16} />

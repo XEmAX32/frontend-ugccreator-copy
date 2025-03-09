@@ -11,95 +11,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { toast } from "@/components/ui/use-toast";
-
-// Mock data for voices
-const AVAILABLE_VOICES = [{
-  id: "aria",
-  name: "Aria",
-  voiceId: "9BWtsMINqrJLrRacOk9x",
-  gender: "female",
-  accent: "american",
-  isFavorite: false,
-  category: "professional"
-}, {
-  id: "roger",
-  name: "Roger",
-  voiceId: "CwhRBWXzGAHq8TQ4Fs17",
-  gender: "male",
-  accent: "british",
-  isFavorite: true,
-  category: "professional"
-}, {
-  id: "sarah",
-  name: "Sarah",
-  voiceId: "EXAVITQu4vr4xnSDxMaL",
-  gender: "female",
-  accent: "american",
-  isFavorite: false,
-  category: "casual"
-}, {
-  id: "laura",
-  name: "Laura",
-  voiceId: "FGY2WhTYpPnrIDTdsKH5",
-  gender: "female",
-  accent: "american",
-  isFavorite: true,
-  category: "casual"
-}, {
-  id: "charlie",
-  name: "Charlie",
-  voiceId: "IKne3meq5aSn9XLyUdCD",
-  gender: "male",
-  accent: "american",
-  isFavorite: false,
-  category: "casual"
-}, {
-  id: "george",
-  name: "George",
-  voiceId: "JBFqnCBsd6RMkjVDRZzb",
-  gender: "male",
-  accent: "british",
-  isFavorite: false,
-  category: "professional"
-}, {
-  id: "callum",
-  name: "Callum",
-  voiceId: "N2lVS1w4EtoT3dr4eOWO",
-  gender: "male",
-  accent: "british",
-  isFavorite: false,
-  category: "casual"
-}, {
-  id: "river",
-  name: "River",
-  voiceId: "SAz9YHcvj6GT2YYXdXww",
-  gender: "nonbinary",
-  accent: "american",
-  isFavorite: false,
-  category: "casual"
-}, {
-  id: "liam",
-  name: "Liam",
-  voiceId: "TX3LPaxmHKxFdv7VOQHJ",
-  gender: "male",
-  accent: "american",
-  isFavorite: false,
-  category: "professional"
-}, {
-  id: "charlotte",
-  name: "Charlotte",
-  voiceId: "XB0fDUnXU5powFXDhCwa",
-  gender: "female",
-  accent: "british",
-  isFavorite: false,
-  category: "professional"
-}];
-
-// Demo text for voice preview
-const DEMO_TEXT = "Hello, I'm your AI presenter. I'll help you create engaging videos that captivate your audience.";
+import axios from "axios";
 
 const VoiceSelection = () => {
-  const [voices, setVoices] = useState(AVAILABLE_VOICES);
+  const [voices, setVoices] = useState([]);
   const [selectedVoice, setSelectedVoice] = useState<string | null>("aria");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
@@ -110,6 +25,12 @@ const VoiceSelection = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    axios.get("http://91.134.66.237:8181/voices").then((res) => {
+      console.log(res)
+      setVoices(res.data.voices)
+    })
+  }, []);
   // Filter voices based on search query and active category
   const filteredVoices = voices.filter(voice => {
     const matchesSearch = voice.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -162,11 +83,13 @@ const VoiceSelection = () => {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
       }
-
+        
       // Start playing new audio
       // In a real implementation, this would use the actual API to get voice samples
       console.log(`Playing voice sample for ${voiceId}`);
       setCurrentlyPlaying(voiceId);
+      audioRef.current.src = voices.filter((voice) => voice.id === currentlyPlaying)[0]["preview_url"]
+      audioRef.current.play();
 
       // Simulate audio playing and stopping after 3 seconds
       setTimeout(() => {
@@ -316,7 +239,6 @@ const VoiceSelection = () => {
               <div className="space-y-1 mt-4">
                 <p className="text-gray-400 text-sm">Sample Text</p>
                 <p className="text-white bg-black/20 p-3 rounded-md italic">
-                  "{DEMO_TEXT}"
                 </p>
               </div>
             </div>}

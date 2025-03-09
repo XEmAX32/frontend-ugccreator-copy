@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "axios";
 
 const promptExamples = [
   "Create a 30-second video explaining why effective time management is crucial for entrepreneurs.",
