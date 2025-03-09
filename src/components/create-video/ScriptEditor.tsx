@@ -1,3 +1,4 @@
+
 import { FormEvent, useState, useEffect } from "react";
 import { Film, Hand, Clock, Package, Lightbulb, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -92,12 +93,11 @@ const ScriptEditor = ({
   const [videoLink, setVideoLink] = useState<string | null>(null);
 
   const handleSpeechPromptChange = (text: string) => {
-    setSpeechPrompt(text);
-    onPromptChange(text);
-  };
-
-  const handleProductSelect = (product: string) => {
-    setSelectedProduct(product);
+    // Only allow changing speech if video has not been generated
+    if (!videoGenerated) {
+      setSpeechPrompt(text);
+      onPromptChange(text);
+    }
   };
 
   const handleMovementExampleClick = (example: string) => {
@@ -106,8 +106,15 @@ const ScriptEditor = ({
   };
 
   const handleSpeechExampleClick = (example: string) => {
-    handleSpeechPromptChange(example);
-    setShowSpeechHints(false);
+    // Only allow setting speech examples if video has not been generated
+    if (!videoGenerated) {
+      handleSpeechPromptChange(example);
+      setShowSpeechHints(false);
+    }
+  };
+
+  const handleProductSelect = (product: string) => {
+    setSelectedProduct(product);
   };
 
   const handleGenerateClip = async () => {
@@ -133,6 +140,12 @@ const ScriptEditor = ({
       return;
     }
 
+    // Validate that speech prompt is provided
+    if (!speechPrompt.trim()) {
+      console.error("Speech prompt is required for generating video");
+      return;
+    }
+
     setIsGeneratingVideo(true);
     setGenerationMessage("Starting video generation...");
 
@@ -140,7 +153,7 @@ const ScriptEditor = ({
       connectToWebsocket(activeClipId);
       const currentClipId = localStorage.getItem("currentClipId");
       const response = await axios.post(`http://91.134.66.237:8181/clip/${currentClipId}/generate`, {
-        prompt: avatarMovements,
+        prompt: speechPrompt, // Changed from avatarMovements to speechPrompt
       }, {
         headers: {'Content-Type': "application/json",}
       }).then((res) => console.log('res on video shit', res));
@@ -244,6 +257,57 @@ const ScriptEditor = ({
       )}
       
       <form onSubmit={onSubmit} className="flex flex-col h-full">
+        {/* SPEECH SECTION - Now positioned first */}
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-sm font-medium text-white/80">Avatar Speech</h3>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowSpeechHints(true);
+              }}
+              className="h-7 px-2 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md"
+              disabled={videoGenerated} // Disable hints button if video has been generated
+            >
+              <Lightbulb size={14} className="text-theme-orange mr-1" />
+              <span className="text-xs">Hints</span>
+            </Button>
+          </div>
+          <Textarea
+            placeholder={activeClipId 
+              ? "Edit what the avatar should say in this clip..." 
+              : "Write what the avatar should say in this clip..."}
+            className={`min-h-[180px] resize-none bg-transparent border-theme-gray-light/30 focus:border-theme-orange text-white ${videoGenerated ? 'opacity-75 cursor-not-allowed' : ''}`}
+            value={speechPrompt}
+            onChange={(e) => handleSpeechPromptChange(e.target.value)}
+            readOnly={videoGenerated} // Make readonly if video has been generated
+          />
+          <div className="mt-2 flex flex-col gap-2">
+            {isGeneratingVideo && (
+              <div className="w-full space-y-2 mb-2">
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-white/70">{generationMessage}</p>
+                  <span className="text-xs text-theme-orange">{generationProgress.value}/{generationProgress.max}</span>
+                </div>
+                <GenerationProgress isGenerating={isGeneratingVideo} progress={generationProgress} />
+              </div>
+            )}
+            <div className="flex justify-end">
+              <Button 
+                type="button"
+                onClick={handleGenerateVideo}  
+                className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
+                disabled={!speechPrompt.trim() || isGeneratingVideo || videoGenerated}
+              >
+                {isGeneratingVideo ? "Generating..." : "Generate Video"} <Video size={16} />
+              </Button>
+            </div>
+          </div>
+        </div>
+        
+        {/* AVATAR MOVEMENTS SECTION - Now positioned second */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-white/80">Avatar Movements & Product Interaction</h3>
@@ -290,53 +354,6 @@ const ScriptEditor = ({
             className="min-h-[100px] resize-none bg-transparent border-theme-gray-light/30 focus:border-theme-orange text-white"
             value={avatarMovements}
             onChange={(e) => setAvatarMovements(e.target.value)}
-          />
-          <div className="mt-2 flex flex-col gap-2">
-            {isGeneratingVideo && (
-              <div className="w-full space-y-2 mb-2">
-                <div className="flex justify-between items-center">
-                  <p className="text-xs text-white/70">{generationMessage}</p>
-                  <span className="text-xs text-theme-orange">{generationProgress.value}/{generationProgress.max}</span>
-                </div>
-                <GenerationProgress isGenerating={isGeneratingVideo} progress={generationProgress} />
-              </div>
-            )}
-            <div className="flex justify-end">
-              <Button 
-                type="button"
-                onClick={handleGenerateVideo}  
-                className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
-                disabled={!avatarMovements.trim() || isGeneratingVideo}
-              >
-                {isGeneratingVideo ? "Generating..." : "Generate Video"} <Video size={16} />
-              </Button>
-            </div>
-          </div>
-        </div>
-        
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-sm font-medium text-white/80">Avatar Speech</h3>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowSpeechHints(true);
-              }}
-              className="h-7 px-2 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md"
-            >
-              <Lightbulb size={14} className="text-theme-orange mr-1" />
-              <span className="text-xs">Hints</span>
-            </Button>
-          </div>
-          <Textarea
-            placeholder={activeClipId 
-              ? "Edit what the avatar should say in this clip..." 
-              : "Write what the avatar should say in this clip..."}
-            className="min-h-[180px] resize-none bg-transparent border-theme-gray-light/30 focus:border-theme-orange text-white"
-            value={speechPrompt}
-            onChange={(e) => handleSpeechPromptChange(e.target.value)}
           />
         </div>
         
