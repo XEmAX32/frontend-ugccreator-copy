@@ -1,5 +1,6 @@
+
 import { FormEvent, useState } from "react";
-import { Film, Hand, Clock, Package, Lightbulb } from "lucide-react";
+import { Film, Hand, Clock, Package, Lightbulb, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -120,6 +121,23 @@ const handleGenerateClip = async () => {
   }
 };
 
+const handleGenerateVideo = async () => {
+  if (!activeClipId) {
+    console.error("No active clip ID");
+    return;
+  }
+
+  try {
+    const response = await axios.post(`/clip/${activeClipId}/generate-video`, {
+      avatarMovements,
+    });
+
+    console.log("Video generated successfully!", response.data);
+  } catch (error) {
+    console.error("Error generating video:", error);
+  }
+};
+
   return (
     <Card className="border-theme-gray/40 bg-theme-black/80 p-6 rounded-lg">
       <div className="flex justify-between items-center mb-4">
@@ -183,6 +201,15 @@ const handleGenerateClip = async () => {
             value={avatarMovements}
             onChange={(e) => setAvatarMovements(e.target.value)}
           />
+          <div className="mt-2 flex justify-end">
+            <Button 
+              type="button"
+              onClick={handleGenerateVideo}  
+              className="bg-theme-gray/30 hover:bg-theme-gray/50 text-white flex items-center gap-2 px-4 py-1 font-medium"
+            >
+              Generate Video <Video size={14} />
+            </Button>
+          </div>
         </div>
         
         <div className="mb-4">
@@ -222,10 +249,10 @@ const handleGenerateClip = async () => {
             <Button 
               type="submit"
               onClick={handleGenerateClip}  
-             className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
+              className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
               disabled={!speechPrompt.trim() || remainingDuration <= 0}
             >
-              {activeClipId ? "Update Clip" : "Generate Clip"} <Film size={16} />
+              Generate Speech <Film size={16} />
             </Button>
           </div>
         </div>
