@@ -1,4 +1,3 @@
-
 import { Plus, Video, Calendar, Download, FileText } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -23,7 +22,6 @@ const Home = () => {
   const { toast } = useToast();
   
   useEffect(() => {
-    // Load projects from localStorage
     axios.get("http://91.134.66.237:8181/project").then((res) => {
       console.log(res)
       setProjects(res.data.projects)
@@ -34,12 +32,10 @@ const Home = () => {
 
   const handleCardClick = (project?: VideoProject) => {
     if (project) {
-      // Show the project in a dialog
       setSelectedProject(project);
       setShowVideoDialog(true);
       console.log("Viewing project:", project);
     } else {
-      // Show the create project dialog
       setShowProjectNameDialog(true);
     }
   };
@@ -54,14 +50,11 @@ const Home = () => {
       return;
     }
     
-    // Close the dialog and navigate to avatar selection
     setShowProjectNameDialog(false);
     setProjectName("");
     
-    // Store the project name in localStorage for later use
     localStorage.setItem("newProjectName", projectName);
     
-    // Navigate to avatar selection
     navigate("/avatar-selection");
   };
   
@@ -71,13 +64,11 @@ const Home = () => {
   };
   
   const handleDownloadVideo = () => {
-    // In a real app, this would trigger the video rendering and download
     toast({
       title: "Download started",
       description: "Your video is being prepared for download."
     });
     
-    // Simulate download delay
     setTimeout(() => {
       toast({
         title: "Download ready",
@@ -100,15 +91,11 @@ const Home = () => {
             </Button>
           </div>
           
-          {/* Page Title */}
           <h1 className="text-2xl font-bold mb-6 text-white">Your Projects</h1>
           
-          {/* Gallery with background and frame */}
           <div className="relative rounded-xl bg-[#221F26]/10 backdrop-blur-sm p-6 shadow-lg overflow-hidden border border-[#403E43]/20">
-            {/* Decorative top-left corner radius */}
             <div className="absolute top-0 left-0 w-12 h-12 rounded-tl-xl bg-[#221F26]/10 border-t border-l border-[#403E43]/20"></div>
             
-            {/* Gallery content */}
             {projects.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
                 {projects.map((project, index) => (
@@ -118,12 +105,10 @@ const Home = () => {
                     onClick={() => handleCardClick(project)}
                   >
                     <div className="aspect-[9/16] relative bg-[#1a1a1a] overflow-hidden">
-                      {/* Thumbnail or placeholder */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span>{project.name}</span>
+                        <span>{project.title}</span>
                       </div>
                       
-                      {/* Project info overlay - simplified to only show title and date */}
                       <div className="absolute bottom-0 left-0 right-0 bg-black/90 p-3">
                         <h3 className="text-white font-medium truncate">{project.title}</h3>
                         <div className="flex items-center mt-1">
@@ -137,7 +122,6 @@ const Home = () => {
                   </Card>
                 ))}
                 
-                {/* Add new project card */}
                 <Card 
                   className="border border-[#8A898C]/40 bg-transparent cursor-pointer hover:bg-[#403E43]/20 transition-all rounded-xl overflow-hidden"
                   onClick={() => handleCardClick()}
@@ -178,7 +162,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Project Preview Dialog */}
       <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
         <DialogContent className="sm:max-w-[90vh] h-[90vh] bg-theme-black border-theme-gray/40 flex flex-col p-0">
           <div className="flex-1 overflow-hidden">
@@ -215,7 +198,6 @@ const Home = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Project Name Dialog */}
       <Dialog open={showProjectNameDialog} onOpenChange={setShowProjectNameDialog}>
         <DialogContent className="bg-theme-black border-theme-gray/40">
           <DialogHeader>
@@ -266,4 +248,3 @@ const Home = () => {
 };
 
 export default Home;
-
