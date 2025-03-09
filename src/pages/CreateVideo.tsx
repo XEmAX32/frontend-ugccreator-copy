@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock, Eye, Save, X } from "lucide-react";
@@ -96,7 +95,6 @@ const CreateVideo = () => {
       prompt: promptText
     }).then((res) => console.log('res clip creation', res));
 
-
     toast({
       title: "Clip generated",
       description: "New clip has been added to your storyboard."
@@ -105,15 +103,26 @@ const CreateVideo = () => {
 
   const onGenerationEnded = (video_link: string) => {
     const currentClipId = localStorage.getItem("currentClipId");
-    clips.map((clip) => {
-      if (clip.uuid == currentClipId) {
-        let newClip = clip;
-        newClip.link = video_link;
-        return newClip
-      }
-      return clip;
-    })
-  }
+    
+    // Update the clip with the video link
+    setClips(prevClips => 
+      prevClips.map(clip => {
+        if (clip.uuid === currentClipId) {
+          return {
+            ...clip,
+            link: video_link
+          };
+        }
+        return clip;
+      })
+    );
+    
+    // Show a toast notification that the video is ready
+    toast({
+      title: "Video generated",
+      description: "Your video is ready to view."
+    });
+  };
 
   const insertExample = (example: string) => {
     setPromptText(example);

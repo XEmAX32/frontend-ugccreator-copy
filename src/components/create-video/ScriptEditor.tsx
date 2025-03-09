@@ -33,7 +33,7 @@ interface ScriptEditorProps {
   onToggleExamples: () => void;
   onSubmit: (e: FormEvent) => void;
   clipText?: string;
-  onGenerationEnded: () => void;
+  onGenerationEnded: (video_link: string) => void;
 }
 
 const PRODUCT_OPTIONS = [
@@ -89,6 +89,7 @@ const ScriptEditor = ({
   const [generationProgress, setGenerationProgress] = useState<{value: number, max: number} | null>({value: 0, max: 0});
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [generationMessage, setGenerationMessage] = useState("");
+  const [videoLink, setVideoLink] = useState<string | null>(null);
 
   const handleSpeechPromptChange = (text: string) => {
     setSpeechPrompt(text);
@@ -181,6 +182,12 @@ const ScriptEditor = ({
           setIsGeneratingVideo(false);
           setVideoGenerated(true);
           setGenerationMessage("Video generation complete!");
+          
+          if (data.video_link) {
+            setVideoLink(data.video_link);
+            onGenerationEnded(data.video_link);
+          }
+          
           socket.close();
         }
       } catch (error) {
@@ -196,7 +203,6 @@ const ScriptEditor = ({
     
     socket.onclose = () => {
       console.log('WebSocket connection closed');
-
     };
     
     return () => {
@@ -226,7 +232,7 @@ const ScriptEditor = ({
         />
       )}
       
-      <form onSubmit={} className="flex flex-col h-full">
+      <form onSubmit={onSubmit} className="flex flex-col h-full">
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-white/80">Avatar Movements & Product Interaction</h3>
@@ -236,7 +242,7 @@ const ScriptEditor = ({
                   <Button 
                     variant="ghost" 
                     className="h-7 px-3 py-1 bg-theme-gray/30 hover:bg-theme-gray/50 text-white flex items-center gap-2 border-none rounded-md shadow-md"
-                    onClick={(e) => e.preventDefault()} // Prevent form submission
+                    onClick={(e) => e.preventDefault()}
                   >
                     <Package size={16} />
                     <span className="font-medium text-sm">{selectedProduct || "Select Product"}</span>
@@ -258,7 +264,7 @@ const ScriptEditor = ({
                 variant="outline" 
                 size="sm"
                 onClick={(e) => {
-                  e.preventDefault(); // Prevent form submission
+                  e.preventDefault();
                   setShowMovementHints(true);
                 }}
                 className="h-7 px-2 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md"
@@ -304,7 +310,7 @@ const ScriptEditor = ({
               variant="outline" 
               size="sm"
               onClick={(e) => {
-                e.preventDefault(); // Prevent form submission
+                e.preventDefault();
                 setShowSpeechHints(true);
               }}
               className="h-7 px-2 bg-theme-gray/30 hover:bg-theme-gray/50 text-white border-none rounded-md shadow-md"
