@@ -1,9 +1,9 @@
-
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { Film, Hand, Clock, Package, Lightbulb, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PromptExamplesPanel from "./PromptExamplesPanel";
 import axios from "axios";
-
 
 interface ScriptEditorProps {
   activeClipId: string | null;
@@ -84,6 +83,9 @@ const ScriptEditor = ({
   const [showMovementHints, setShowMovementHints] = useState(false);
   const [showSpeechHints, setShowSpeechHints] = useState(false);
   const [videoGenerated, setVideoGenerated] = useState(false);
+  const [videoGenerationProgress, setVideoGenerationProgress] = useState(0);
+  const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
+  const [generationMessage, setGenerationMessage] = useState("");
 
   const handleSpeechPromptChange = (text: string) => {
     setSpeechPrompt(text);
@@ -104,41 +106,107 @@ const ScriptEditor = ({
     setShowSpeechHints(false);
   };
 
+  const handleGenerateClip = async () => {
+    if (!activeClipId) {
+      console.error("No active clip ID");
+      return;
+    }
 
-const handleGenerateClip = async () => {
-  if (!activeClipId) {
-    console.error("No active clip ID");
-    return;
-  }
+    try {
+      const response = await axios.post(`/clip/${activeClipId}/generate`, {
+        avatarMovements,
+      });
 
-  try {
-    const response = await axios.post(`/clip/${activeClipId}/generate`, {
-      avatarMovements,
-    });
+      console.log("Clip generated successfully!", response.data);
+    } catch (error) {
+      console.error("Error generating clip:", error);
+    }
+  };
 
-    console.log("Clip generated successfully!", response.data);
-  } catch (error) {
-    console.error("Error generating clip:", error);
-  }
-};
+  const handleGenerateVideo = async () => {
+    if (!activeClipId) {
+      console.error("No active clip ID");
+      return;
+    }
 
-const handleGenerateVideo = async () => {
-  if (!activeClipId) {
-    console.error("No active clip ID");
-    return;
-  }
+    setIsGeneratingVideo(true);
+    setVideoGenerationProgress(0);
+    setGenerationMessage("Starting video generation...");
 
-  try {
-    const response = await axios.post(`/clip/${activeClipId}/generate-video`, {
-      avatarMovements,
-    });
+    try {
+      connectToWebsocket(activeClipId);
+      
+      const response = await axios.post(`/clip/${activeClipId}/generate-video`, {
+        avatarMovements,
+      });
 
-    console.log("Video generated successfully!", response.data);
-    setVideoGenerated(true);
-  } catch (error) {
-    console.error("Error generating video:", error);
-  }
-};
+      console.log("Video generation started successfully!", response.data);
+    } catch (error) {
+      console.error("Error generating video:", error);
+      setIsGeneratingVideo(false);
+      setGenerationMessage("Error generating video");
+    }
+  };
+
+  const connectToWebsocket = (clipId: string) => {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/clip/${clipId}/progress`;
+    
+    const socket = new WebSocket(wsUrl);
+    
+    socket.onopen = () => {
+      console.log('WebSocket connection established');
+      setGenerationMessage("Connected to video generation service...");
+    };
+    
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('WebSocket message received:', data);
+        
+        if (data.progress !== undefined) {
+          setVideoGenerationProgress(data.progress);
+        }
+        
+        if (data.message) {
+          setGenerationMessage(data.message);
+        }
+        
+        if (data.progress === 100 || data.status === 'completed') {
+          setIsGeneratingVideo(false);
+          setVideoGenerated(true);
+          setGenerationMessage("Video generation complete!");
+          socket.close();
+        }
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    };
+    
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      setIsGeneratingVideo(false);
+      setGenerationMessage("Error connecting to video service");
+    };
+    
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+      if (videoGenerationProgress < 100) {
+        setIsGeneratingVideo(false);
+      }
+    };
+    
+    return () => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.close();
+      }
+    };
+  };
+
+  useEffect(() => {
+    return () => {
+    };
+  }, []);
 
   return (
     <Card className="border-theme-gray/40 bg-theme-black/80 p-6 rounded-lg">
@@ -203,15 +271,26 @@ const handleGenerateVideo = async () => {
             value={avatarMovements}
             onChange={(e) => setAvatarMovements(e.target.value)}
           />
-          <div className="mt-2 flex justify-end">
-            <Button 
-              type="button"
-              onClick={handleGenerateVideo}  
-              className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
-              disabled={!avatarMovements.trim()}
-            >
-              Generate Video <Video size={16} />
-            </Button>
+          <div className="mt-2 flex flex-col gap-2">
+            {isGeneratingVideo && (
+              <div className="w-full space-y-2 mb-2">
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-white/70">{generationMessage}</p>
+                  <span className="text-xs text-theme-orange">{videoGenerationProgress}%</span>
+                </div>
+                <Progress value={videoGenerationProgress} className="h-1 w-full bg-theme-gray/30" />
+              </div>
+            )}
+            <div className="flex justify-end">
+              <Button 
+                type="button"
+                onClick={handleGenerateVideo}  
+                className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
+                disabled={!avatarMovements.trim() || isGeneratingVideo}
+              >
+                {isGeneratingVideo ? "Generating..." : "Generate Video"} <Video size={16} />
+              </Button>
+            </div>
           </div>
         </div>
         
@@ -253,7 +332,7 @@ const handleGenerateVideo = async () => {
               type="submit"
               onClick={handleGenerateClip}  
               className="bg-theme-orange hover:bg-theme-orange-light text-white flex items-center gap-2 px-6 py-2 font-medium"
-              disabled={!speechPrompt.trim() || remainingDuration <= 0 || !videoGenerated}
+              disabled={!speechPrompt.trim() || remainingDuration <= 0 || !videoGenerated || isGeneratingVideo}
             >
               Generate Speech <Film size={16} />
             </Button>
