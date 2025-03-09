@@ -1,20 +1,24 @@
 
-import { Plus, Video, Calendar, Download } from "lucide-react";
+import { Plus, Video, Calendar, Download, FileText } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { VideoProject } from "@/types/video";
-import { Dialog, DialogContent, DialogClose, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogClose, DialogFooter, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 import VideoPreview from "@/components/create-video/VideoPreview";
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const Home = () => {
   const [projects, setProjects] = useState<VideoProject[]>([]);
   const [selectedProject, setSelectedProject] = useState<VideoProject | null>(null);
   const [showVideoDialog, setShowVideoDialog] = useState(false);
+  const [showProjectNameDialog, setShowProjectNameDialog] = useState(false);
+  const [projectName, setProjectName] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -23,7 +27,9 @@ const Home = () => {
     axios.get("http://91.134.66.237:8181/project").then((res) => {
       console.log(res)
       setProjects(res.data.projects)
-    })
+    }).catch(err => {
+      console.error("Failed to load projects:", err);
+    });
   }, []);
 
   const handleCardClick = (project?: VideoProject) => {
@@ -33,8 +39,30 @@ const Home = () => {
       setShowVideoDialog(true);
       console.log("Viewing project:", project);
     } else {
-      navigate("/avatar-selection");
+      // Show the create project dialog
+      setShowProjectNameDialog(true);
     }
+  };
+  
+  const handleCreateProject = () => {
+    if (!projectName.trim()) {
+      toast({
+        title: "Project name required",
+        description: "Please enter a name for your project.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Close the dialog and navigate to avatar selection
+    setShowProjectNameDialog(false);
+    setProjectName("");
+    
+    // Store the project name in localStorage for later use
+    localStorage.setItem("newProjectName", projectName);
+    
+    // Navigate to avatar selection
+    navigate("/avatar-selection");
   };
   
   const formatDate = (dateString: string) => {
@@ -64,13 +92,11 @@ const Home = () => {
         <div className="max-w-6xl mx-auto">
           <div className="mb-8 flex justify-center">
             <Button 
-              asChild 
               className="bg-theme-orange hover:bg-theme-orange-light flex items-center gap-3 text-lg px-6 py-6 rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-200"
               size="lg"
+              onClick={() => setShowProjectNameDialog(true)}
             >
-              <Link to="/avatar-selection">
-                <Plus size={22} /> New Project
-              </Link>
+              <Plus size={22} /> New Project
             </Button>
           </div>
           
@@ -188,8 +214,56 @@ const Home = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Project Name Dialog */}
+      <Dialog open={showProjectNameDialog} onOpenChange={setShowProjectNameDialog}>
+        <DialogContent className="bg-theme-black border-theme-gray/40">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Create New Project</DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <Label htmlFor="project-name" className="text-sm text-muted-foreground mb-2 block">
+              Enter a name for your project
+            </Label>
+            <div className="flex items-center gap-2">
+              <FileText className="text-muted-foreground" size={20} />
+              <Input 
+                id="project-name"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="My awesome video"
+                className="border-theme-gray/40 bg-theme-black focus-visible:ring-theme-orange"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCreateProject();
+                  }
+                }}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowProjectNameDialog(false)}
+              className="bg-transparent border-theme-gray/40 text-white hover:bg-theme-black/60"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateProject}
+              className="bg-theme-orange hover:bg-theme-orange-light"
+            >
+              Create Project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageContainer>
   );
 };
 
 export default Home;
+
